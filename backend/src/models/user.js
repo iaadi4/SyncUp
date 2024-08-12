@@ -32,11 +32,11 @@ userSchema.pre('save', function(next) {
     next();
 });
 
-userSchema.methods.comparePassword = function(password) {
+userSchema.methods.comparePassword = function compare(password) {
     return bcrypt.compareSync(password, this.password);
 }
 
-userSchema.methods.genJwt = () => {
+userSchema.methods.genJwt = function generate() {
     return jwt.sign({id: this.id, email: this.email}, SECRETORKEY, {expiresIn: '1m'});
 }
 
