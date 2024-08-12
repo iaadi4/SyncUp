@@ -1,14 +1,14 @@
-import User from "../models/user.js";
+import models from "../models/index.js";
 import CrudRepository from "./crud-repository.js";
 
 class UserRepository extends CrudRepository {
     constructor() {
-        super(User);
+        super(models.User);
     }
 
     async getByEmail(userEmail) {
         try {
-            const user = await User.findOne({email: userEmail});
+            const user = await models.User.findOne({email: userEmail});
             if(!user) {
                 throw new Error('User not found');
             }

@@ -1,9 +1,9 @@
-import UserRepository from '../repositories/user-repository.js';
+import repositories from '../repositories/index.js';
 
 class UserService {
 
     constructor() {
-        this.userRepository = new UserRepository();
+        this.userRepository = new repositories.UserRepository();
     }
 
     async signup(data) {

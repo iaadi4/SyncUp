@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import envValues from '../config/serverConfig.js';
-const { SECRETORKEY } = envValues;
+import envVariables from '../config/serverConfig.js';
+const { SECRETORKEY } = envVariables;
 
 const userSchema = new mongoose.Schema({
     email: {
@@ -37,7 +37,7 @@ userSchema.methods.comparePassword = function compare(password) {
 }
 
 userSchema.methods.genJwt = function generate() {
-    return jwt.sign({id: this.id, email: this.email}, SECRETORKEY, {expiresIn: '1m'});
+    return jwt.sign({id: this.id, email: this.email}, SECRETORKEY, {expiresIn: '1w'});
 }
 
 const User = mongoose.model('User', userSchema);
