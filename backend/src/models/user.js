@@ -21,8 +21,13 @@ const userSchema = new mongoose.Schema({
         required: true,
         minLength: 6,
         maxLength: 30
+    },
+    gender: {
+        type: String,
+        required: true,
+        enum: ['male', 'female', 'prefer not to say']
     }
-});
+}, {timestamps: true});
 
 userSchema.pre('save', function(next) {
     const user = this;
