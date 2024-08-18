@@ -4,7 +4,7 @@ import auth from '../../middlewares/authentication.js';
 
 const router = express.Router();
 const { signup, login } = controllers.UserController;
-const { sendMessage } = controllers.MessageController;
+const { sendMessage, getMessages } = controllers.MessageController;
 
 router.post (
     '/signup',
@@ -20,6 +20,12 @@ router.post(
     '/message/send/:id',
     auth,
     sendMessage
+)
+
+router.get(
+    '/messages/:id',
+    auth,
+    getMessages
 )
 
 export default router;

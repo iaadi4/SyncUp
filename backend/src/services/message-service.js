@@ -23,9 +23,24 @@ class MessageService {
 
             if(newMessage) {
                 conversation.messages.push(newMessage._id);
-                await conversation.save();
             }
+
+            await Promise.all([conversation.save(), newMessage.save()]);
+
             return newMessage;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getMessages(senderId, receiverId) {
+        try {
+            const conversation = await Conversation.findOne({
+                participants: {$all: [senderId, receiverId]}
+            }).populate("messages");
+            if(!conversation)
+                return [];
+            return conversation.messages;
         } catch (error) {
             throw error;
         }
