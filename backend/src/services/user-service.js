@@ -28,6 +28,16 @@ class UserService {
             throw error;
         }
     }
+
+    async getAll() {
+        try {
+            const users = await this.userRepository.getAll();
+            return users;
+        } catch (error) {
+            console.log('something went wrong in the service layer');
+            throw error;
+        }
+    }
 }
 
 export default UserService;

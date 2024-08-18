@@ -36,7 +36,24 @@ const login = async(req, res) => {
     }
 }
 
+const getAll = async(req, res) => {
+    try {
+        const users = await userService.getAll();
+        return res.status(200).json({
+            data: users,
+            success: true
+        })
+    } catch (error) {
+        return res.status(500).json({
+            data: {},
+            success: false,
+            error: error
+        });
+    }
+}
+
 export default {
     signup,
-    login
+    login,
+    getAll
 }

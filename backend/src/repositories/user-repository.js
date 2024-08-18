@@ -6,6 +6,16 @@ class UserRepository extends CrudRepository {
         super(models.User);
     }
 
+    async getAll() {
+        try {
+            const users = await models.User.find({}).select("-password");
+            return users;
+        } catch (error) {
+            console.log('Something went wrong in the repository layer');
+            throw error;
+        }
+    }
+
     async getByEmail(userEmail) {
         try {
             const user = await models.User.findOne({email: userEmail});
