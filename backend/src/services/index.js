@@ -1,5 +1,7 @@
-import UserService from './user-service';
+import MessageService from './message-service.js';
+import UserService from './user-service.js';
 
 export default {
-    UserService
+    UserService,
+    MessageService
 }

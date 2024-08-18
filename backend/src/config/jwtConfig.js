@@ -1,5 +1,5 @@
 import JWT from 'passport-jwt';
-import envVariables from '../config/serverConfig.js';
+import envVariables from './serverConfig.js';
 import models from '../models/index.js';
 const { SECRETORKEY } = envVariables;
 
@@ -18,7 +18,7 @@ const passportAuth = (passport) => {
             done(null, false);
         }
         else {
-            done(null, true);
+            done(null, user);
         }
     }));
 }

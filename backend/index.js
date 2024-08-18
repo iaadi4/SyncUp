@@ -4,7 +4,7 @@ import apiRoutes from './src/routes/index.js';
 import dbConnect from './src/config/databaseConfig.js';
 import bodyParser from 'body-parser';
 import passport from 'passport';
-import passportAuth from './src/middlewares/jwt-middleware.js';
+import passportAuth from './src/config/jwtConfig.js';
 
 const app = express();
 
