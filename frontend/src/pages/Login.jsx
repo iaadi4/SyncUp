@@ -26,7 +26,7 @@ const Login = () => {
           </svg>
           <input type="email" className="grow" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
         </label>
-        <label className="input input-bordered flex items-center gap-2">
+        <label className="input input-bordered flex items-center gap-2 mb-8">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 16 16"
@@ -41,7 +41,6 @@ const Login = () => {
           </svg>
           <input type="password" className="grow" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </label>
-        <Link to={'/signup'} className="ml-1 text-sm mb-8 text-slate-400" >New here?</Link>
         <button 
           type="submit"
           className="btn btn-primary"
@@ -49,6 +48,10 @@ const Login = () => {
         >
           Submit
         </button>
+        <div className="flex items-center justify-center">
+          <span className="text-sm">New here?</span>
+          <Link to={'/signup'} className="ml-2 underline text-primary text-sm" >Register</Link>
+        </div>
       </div>
       </div>
     </div>

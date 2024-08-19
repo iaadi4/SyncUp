@@ -5,6 +5,7 @@ import dbConnect from './src/config/databaseConfig.js';
 import bodyParser from 'body-parser';
 import passport from 'passport';
 import passportAuth from './src/config/jwtConfig.js';
+import cors from 'cors';
 
 const app = express();
 
@@ -12,6 +13,7 @@ const { PORT } = config;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
+app.use(cors());
 
 app.use(passport.initialize());
 passportAuth(passport);

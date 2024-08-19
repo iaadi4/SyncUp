@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
 
 const Signup = () => {
+
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -9,6 +13,27 @@ const Signup = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if(!email || !name || !password || !gender)
+      toast.error('Fill out all inputs', {theme: "dark", autoClose: 2000, hideProgressBar: true})
+    else if(name.length < 3 || name.length > 50)
+      toast.error('Name must be 3-50 characters', {theme: "dark", autoClose: 2000, hideProgressBar: true})
+    else if(password.length < 6 || password.length > 30)
+      toast.error('Password must be 6-30 characters', {theme: "dark", autoClose: 2000, hideProgressBar: true})
+    else {
+      axios.post('http://localhost:3000/api/v1/signup', {
+        email,
+        name,
+        password,
+        gender
+      })
+      .then(function(response) {
+        console.log(response.data);
+      })
+      .catch(function(error) {
+        console.error('Error:', error);
+        toast.error('Signup failed', {theme: "dark", autoClose: 2000, hideProgressBar: true});
+      });
+    }
   };
 
   return (
@@ -70,7 +95,7 @@ const Signup = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </label>
-          <div className="flex gap-2 mb-8">
+          <div className="flex gap-2 mb-8 ml-1">
             <p>Male</p>
             <input
               type="radio"
@@ -93,14 +118,18 @@ const Signup = () => {
           >
             Submit
           </button>
-          <Link 
-            to={"/login"}
-            className="ml-1 text-sm mb-4"
-          >
-            Login
-          </Link>
+          <div className="flex items-center justify-center">
+            <span className="text-sm">Already registered?</span>
+            <Link 
+              to={"/login"}
+              className="ml-2 underline text-primary text-sm"
+            >
+              Login
+            </Link>
+          </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
