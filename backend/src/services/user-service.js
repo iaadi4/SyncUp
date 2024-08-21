@@ -22,7 +22,10 @@ class UserService {
             if(!user.comparePassword(password)) {
                 throw new Error('incorrect password');
             }
-            return user.genJwt();
+            const token = user.genJwt();
+            const userData = user._doc;
+            delete userData.password;
+            return {...userData, token}
         } catch (error) {
             console.log('something went wrong in the service layer');
             throw error;
