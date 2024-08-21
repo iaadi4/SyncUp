@@ -26,7 +26,7 @@ const Signup = () => {
         password,
         gender
       })
-      .then(function() {
+      .then(function(response) {
         toast.success('Account created', {theme: "dark", autoClose: 2000, hideProgressBar: true});
       })
       .catch(function(error) {
