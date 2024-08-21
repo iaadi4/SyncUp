@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import { useSelector } from "react-redux";
 
 const Signup = () => {
 
@@ -10,6 +11,9 @@ const Signup = () => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [gender, setGender] = useState("");
+
+  const data = useSelector((state) => state.auth);
+  console.log(data);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -28,6 +32,7 @@ const Signup = () => {
       })
       .then(function(response) {
         console.log(response.data);
+        toast.success('Account created', {theme: "dark", autoClose: 2000, hideProgressBar: true})
       })
       .catch(function(error) {
         console.error('Error:', error);
