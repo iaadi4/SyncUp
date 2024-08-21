@@ -14,7 +14,7 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if(!email || !password)
-      toast.error('Fill out all inputs', {theme: "dark", autoClose: 2000, hideProgressBar: true})
+      toast.error('Fill out all inputs', {theme: "dark", autoClose: 2000, hideProgressBar: true});
     else {
       axios.post('http://localhost:3000/api/v1/login', {
         email,
@@ -23,11 +23,10 @@ const Login = () => {
       .then(function(response) {
         localStorage.setItem('user', JSON.stringify({userData: response.data.data}));
         dispatch(login(JSON.stringify({userData: response.data.data})));
-        console.log(response.data.data);
       })
       .catch(function(error) {
         console.error('Error:', error);
-        toast.error('Signup failed', {theme: "dark", autoClose: 2000, hideProgressBar: true});
+        toast.error('Login failed', {theme: "dark", autoClose: 2000, hideProgressBar: true});
       });
     }
   };
@@ -35,7 +34,7 @@ const Login = () => {
   return (
     <div className="flex h-screen items-center justify-center">
       <div className="flex w-[360px] h-[400px] outline outline-1 outline-customBlack items-center justify-center rounded-lg">
-        <div className="flex flex-col gap-3">
+        <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
           <label className="input input-bordered flex items-center gap-2 w-[300px]">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -78,7 +77,7 @@ const Login = () => {
           <button
             type="submit"
             className="btn btn-primary"
-            onClick={handleSubmit}
+            onSubmit={handleSubmit}
           >
             Submit
           </button>
@@ -91,7 +90,7 @@ const Login = () => {
               Register
             </Link>
           </div>
-        </div>
+        </form>
       </div>
       <ToastContainer />
     </div>

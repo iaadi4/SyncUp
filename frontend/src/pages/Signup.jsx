@@ -18,11 +18,11 @@ const Signup = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if(!email || !name || !password || !gender)
-      toast.error('Fill out all inputs', {theme: "dark", autoClose: 2000, hideProgressBar: true})
+      toast.error('Fill out all inputs', {theme: "dark", autoClose: 2000, hideProgressBar: true});
     else if(name.length < 3 || name.length > 50)
-      toast.error('Name must be 3-50 characters', {theme: "dark", autoClose: 2000, hideProgressBar: true})
+      toast.error('Name must be 3-50 characters', {theme: "dark", autoClose: 2000, hideProgressBar: true});
     else if(password.length < 6 || password.length > 30)
-      toast.error('Password must be 6-30 characters', {theme: "dark", autoClose: 2000, hideProgressBar: true})
+      toast.error('Password must be 6-30 characters', {theme: "dark", autoClose: 2000, hideProgressBar: true});
     else {
       axios.post('http://localhost:3000/api/v1/signup', {
         email,
@@ -32,7 +32,7 @@ const Signup = () => {
       })
       .then(function(response) {
         console.log(response.data);
-        toast.success('Account created', {theme: "dark", autoClose: 2000, hideProgressBar: true})
+        toast.success('Account created', {theme: "dark", autoClose: 2000, hideProgressBar: true});
       })
       .catch(function(error) {
         console.error('Error:', error);
@@ -44,7 +44,7 @@ const Signup = () => {
   return (
     <div className="flex h-screen items-center justify-center">
       <div className="flex w-[360px] h-[400px] outline outline-1 outline-customBlack items-center justify-center rounded-lg">
-        <div className="flex flex-col gap-3">
+        <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
           <label className="input input-bordered flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -119,7 +119,7 @@ const Signup = () => {
           <button
             type="submit"
             className="btn btn-primary"
-            onClick={handleSubmit}
+            onSubmit={handleSubmit}
           >
             Submit
           </button>
@@ -132,7 +132,7 @@ const Signup = () => {
               Login
             </Link>
           </div>
-        </div>
+        </form>
       </div>
       <ToastContainer />
     </div>
