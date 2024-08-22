@@ -36,8 +36,6 @@ const Home = () => {
     getConversation();
   }, []);
 
-  console.log(conversations);
-
   return (
     <div className="flex h-screen w-screen overflow-x-auto">
       {loading ? (
@@ -55,7 +53,7 @@ const Home = () => {
                   </h1>
                 </div>
                 <div className="flex items-center justify-end">
-                  <div className="flex p-2 rounded-full hover:bg-slate-900 cursor-pointer mt-1">
+                  <div className="flex p-2 w-12 btn btn-ghost rounded-full hover:bg-slate-900 cursor-pointer mt-1">
                     <FaPlus className="w-6 h-6" />
                   </div>
                 </div>
@@ -95,7 +93,7 @@ const Home = () => {
               ))}
             </div>
           </div>
-          <div className="flex w-2/3 grow">
+          <div className="flex h-full w-2/3 grow">
             <Messages />
           </div>
         </>
