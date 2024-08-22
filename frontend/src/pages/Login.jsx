@@ -22,7 +22,7 @@ const Login = () => {
       })
       .then(function(response) {
         localStorage.setItem('user', JSON.stringify({userData: response.data.data}));
-        dispatch(login(JSON.stringify({userData: response.data.data})));
+        dispatch(login({userData: response.data.data}));
       })
       .catch(function(error) {
         console.error('Error:', error);

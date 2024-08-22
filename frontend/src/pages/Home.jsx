@@ -1,47 +1,96 @@
 import { FaPlus } from "react-icons/fa6";
+import Conversation from "../components/Conversation";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Home = () => {
+
+    const [conversations, setConversations] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+      const getConversation = async () => {
+        setLoading(true);
+        const data = JSON.parse(localStorage.getItem('user'));
+        const token = data.userData.token;
+        try {
+          const response = await axios.get('http://localhost:3000/api/v1/users', {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
+          setConversations(response.data.data);
+        } catch(error) {
+          toast.error("Error fetching conversation", {theme: "dark", autoClose: 2000, hideProgressBar: true});
+          console.log(error);
+        } finally {
+          setLoading(false);
+        }
+      }
+      getConversation();
+    }, []);
+
+    console.log(conversations);
+
   return (
-    <div className="flex h-screen w-screen">
-      <div className="flex flex-col w-1/3 overflow-x-auto bg-black">
-        <div className="flex h-16 w-full">
-          <div className="flex items-center basis-[75%] lg:basis-[85%]">
-            <h1 className="text-[1.75rem] font-semibold m-4 ml-10 text-white">
-              Chats
-            </h1>
-          </div>
-          <div className="flex items-center justify-end">
-            <div className="flex p-2 rounded-full hover:bg-slate-900 cursor-pointer mt-1">
-              <FaPlus className="w-6 h-6"/>
+    <div className="flex h-screen w-screen overflow-x-auto">
+      {loading ? ( <h1>loading</h1>) : null}
+      <div className="flex flex-col w-1/3 min-w-[400px] max-w-[500px] bg-black">
+        <div className="flex flex-col sticky top-0 z-10">
+          <div className="flex h-16 w-full">
+            <div className="flex items-center basis-[75%] lg:basis-[85%]">
+              <h1 className="text-[1.75rem] font-semibold m-4 ml-10 text-white">
+                Chats
+              </h1>
+            </div>
+            <div className="flex items-center justify-end">
+              <div className="flex p-2 rounded-full hover:bg-slate-900 cursor-pointer mt-1">
+                <FaPlus className="w-6 h-6" />
+              </div>
             </div>
           </div>
+          <div className="flex m-4">
+            <label className="input input-bordered flex items-center gap-2 w-full h-10">
+              <input type="text" className="grow" placeholder="Search" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                className="h-4 w-4 opacity-70"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </label>
+            </div>
+            <div className="flex justify-evenly h-10 items-center mb-6">
+              <h1 className="text-sm cursor-pointer font-semibold text-white underline underline-offset-4 decoration-[1.5px] de">
+                ACTIVE NOW
+              </h1>
+              {/* add font-semibold on active */}
+              <h1 className="text-sm cursor-pointer hover:text-white">
+                CONTACTS
+              </h1>
+            </div>
         </div>
-        <div className="flex m-4">
-          <label className="input input-bordered flex items-center gap-2 w-full h-10">
-            <input type="text" className="grow" placeholder="Search" />
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 16 16"
-              fill="currentColor"
-              className="h-4 w-4 opacity-70"
-            >
-              <path
-                fillRule="evenodd"
-                d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </label>
-        </div>
-        <div className="flex justify-evenly h-10 items-center">
-          <h1 className="text-sm cursor-pointer font-semibold">ACTIVE NOW</h1> {/* add font-semibold on active */}
-          <h1 className="text-sm cursor-pointer ">CONTACTS</h1> 
-        </div>
-        <div>
-          
+        <div className="flex-1 overflow-y-auto">
+          {conversations.map((conversation) => (
+            <Conversation
+              key={conversation._id}
+              conversation = {conversation}
+            />
+          ))}
         </div>
       </div>
-      <div className="flex w-2/3"></div>
+      <div className="flex w-2/3">
+
+      </div>
+      <ToastContainer />
     </div>
   );
 };

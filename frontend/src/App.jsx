@@ -7,15 +7,14 @@ import { useSelector } from 'react-redux';
 
 function App() {
   const user = useSelector((state) => state.auth.userData);
-  const userData = user ? JSON.parse(user) : null;
 
   return (
     <div>
       <Routes>
           <Route path='*' element={<Error />} />
-          <Route path='/' element={userData ? <Home /> : <Navigate to={'/signup'} />} />
+          <Route path='/' element={user ? <Home /> : <Navigate to={'/signup'} />} />
           <Route path='/login' element={<Login />} />
-          <Route path='/signup' element={userData ? <Navigate to={'/'} /> : <Signup />} />
+          <Route path='/signup' element={user ? <Navigate to={'/'} /> : <Signup />} />
       </Routes>
     </div>
   )
