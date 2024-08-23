@@ -3,8 +3,6 @@ import { useSelector } from "react-redux";
 const Message = ({ message }) => {
   const conversation = useSelector((state) => state.conversation.selected);
   const isReceiver = conversation._id === message?.senderId ? true : false;
-  console.log(message);
-  console.log(isReceiver);
 
   const messageTime = new Date(message.createdAt);
   const formattedMessageTime = messageTime.toISOString().substring(11, 16);

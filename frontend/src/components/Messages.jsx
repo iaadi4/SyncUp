@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { GrClearOption } from "react-icons/gr";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { setSelected } from "../Redux/conversationSlice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -15,6 +15,8 @@ const Messages = () => {
 
   const data = JSON.parse(localStorage.getItem("user"));
   const token = data.userData.token;
+
+  const lastMessageRef = useRef();
 
   useEffect(() => {
     setSelected(null);
@@ -48,6 +50,7 @@ const Messages = () => {
   };
 
   useEffect(() => {
+    setMessage(null);
     const getMessages = async () => {
       setLoading(true);
       if (conversation) {
@@ -75,6 +78,10 @@ const Messages = () => {
     };
     getMessages();
   }, [conversation, token]);
+
+  useEffect(() => {
+      lastMessageRef?.current?.scrollIntoView({behavior: 'smooth'});
+  }, [messages])
 
   return (
     <div className="w-full h-full bg-zinc-900 min-w-[650px] overflow-x-auto">
@@ -138,10 +145,9 @@ const Messages = () => {
           )}
           <div className="bg-zinc-800 grow h-[78%] overflow-y-auto">
             {messages ? messages.map((message) => (
-              <Message
-                key={message._id}
-                message={message}
-              />
+              <div key={message._id} ref={lastMessageRef}>
+              <Message message={message}/>
+              </div>
             )): null}
           </div>
           <form
