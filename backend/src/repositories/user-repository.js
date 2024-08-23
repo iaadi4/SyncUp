@@ -6,9 +6,9 @@ class UserRepository extends CrudRepository {
         super(models.User);
     }
 
-    async getAll() {
+    async getAll(currentUserId) {
         try {
-            const users = await models.User.find({}).select("-password");
+            const users = await models.User.find({_id: {$ne: currentUserId}}).select("-password");
             return users;
         } catch (error) {
             console.log('Something went wrong in the repository layer');

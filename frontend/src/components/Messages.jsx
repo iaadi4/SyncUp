@@ -15,6 +15,17 @@ const Messages = () => {
 
   const data = JSON.parse(localStorage.getItem("user"));
   const token = data.userData.token;
+  
+  const socket = useSelector((state) => state.socket.instance);
+
+  useEffect(() => {
+    socket?.on('newMessage', (newMessage) => {
+      console.log(newMessage);
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+    })
+
+    return () => socket?.off('newMessage');
+  }, [socket, setMessages, messages])
 
   const lastMessageRef = useRef();
 

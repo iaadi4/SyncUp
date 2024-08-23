@@ -6,8 +6,7 @@ import bodyParser from 'body-parser';
 import passport from 'passport';
 import passportAuth from './src/config/jwtConfig.js';
 import cors from 'cors';
-
-const app = express();
+import {server, app } from './src/socket/socket.js';
 
 const { PORT } = config;
 
@@ -20,7 +19,7 @@ passportAuth(passport);
 
 app.use('/api', apiRoutes);
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log('Server started at', PORT);
     dbConnect();
     console.log('Mongo db connected');

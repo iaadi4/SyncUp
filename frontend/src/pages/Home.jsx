@@ -5,10 +5,17 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useDispatch, useSelector } from "react-redux";
+import { setSocket, setOnlineUsers } from "../Redux/socketSlice";
+import io from "socket.io-client";
 
 const Home = () => {
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const dispatch = useDispatch();
+
+  const user = useSelector((state) => state.auth.userData);
 
   useEffect(() => {
     const getConversation = async () => {
@@ -35,6 +42,22 @@ const Home = () => {
     };
     getConversation();
   }, []);
+
+  useEffect(() => {
+    const socket = io('localhost:3000', {
+      query: {
+        userId: user.userData._id
+      }
+    });
+    dispatch(setSocket(socket));
+
+    socket.on('getOnlineUsers', (users) => {
+      dispatch(setOnlineUsers(users));
+    })
+    return () => {
+      socket.disconnect();
+    }
+  }, [dispatch, user])
 
   return (
     <div className="flex h-screen w-screen overflow-x-auto">

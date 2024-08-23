@@ -1,5 +1,7 @@
 import Conversation from "../models/conversation.js";
 import Message from "../models/message.js";
+import getReceiverSocketId from "../socket/socket.js";
+import {io} from "../socket/socket.js";
 
 class MessageService {
 
@@ -26,6 +28,11 @@ class MessageService {
             }
 
             await Promise.all([conversation.save(), newMessage.save()]);
+
+            const receiverSocketId = getReceiverSocketId(receiverId);
+            if(receiverSocketId) {
+                io.to(receiverSocketId).emit('newMessage', newMessage);
+            }
 
             return newMessage;
         } catch (error) {

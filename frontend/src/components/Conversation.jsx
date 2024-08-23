@@ -6,6 +6,8 @@ const Conversation = ({conversation}) => {
     const dispatch = useDispatch();    
     const selectedConversation = useSelector((state) => state.conversation.selected);
     const selected = selectedConversation?._id === conversation._id;
+    const onlineUsers = useSelector((state) => state.socket.onlineUsers);
+    const isOnline = onlineUsers.includes(conversation._id);
 
   return (
     <div
@@ -14,7 +16,7 @@ const Conversation = ({conversation}) => {
     >
       <div className="flex items-center w-full mx-5">
         <div className="flex basis-2/12">
-        <div className="avatar online">
+        <div className={`avatar ${isOnline ? "online" : ""}`}>
           <div className="w-14 rounded-full">
             <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
           </div>

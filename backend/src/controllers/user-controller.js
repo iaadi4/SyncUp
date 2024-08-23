@@ -38,7 +38,7 @@ const login = async(req, res) => {
 
 const getAll = async(req, res) => {
     try {
-        const users = await userService.getAll();
+        const users = await userService.getAll(req.user.id);
         return res.status(200).json({
             data: users,
             success: true

@@ -32,9 +32,9 @@ class UserService {
         }
     }
 
-    async getAll() {
+    async getAll(currentUserId) {
         try {
-            const users = await this.userRepository.getAll();
+            const users = await this.userRepository.getAll(currentUserId);
             return users;
         } catch (error) {
             console.log('something went wrong in the service layer');
