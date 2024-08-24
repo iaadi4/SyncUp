@@ -1,20 +1,18 @@
-import Conversation from "../models/conversation.js";
+import repositories from "../repositories/index.js";
 import Message from "../models/message.js";
 import getReceiverSocketId from "../socket/socket.js";
 import {io} from "../socket/socket.js";
+
+const conversationRepository = new repositories.ConversationRepository();
 
 class MessageService {
 
     async sendMessage(senderId, receiverId, message) {
         try {
-            let conversation = await Conversation.findOne({
-                participants: {$all: [senderId, receiverId]}
-            });
+            let conversation = await conversationRepository.get(senderId, receiverId);
 
             if(!conversation) {
-                conversation = await Conversation.create({
-                    participants: [senderId, receiverId]
-                });
+                conversation = await conversationRepository.create(senderId, receiverId);
             }
 
             const newMessage = await Message.create({
@@ -42,9 +40,7 @@ class MessageService {
 
     async getMessages(senderId, receiverId) {
         try {
-            const conversation = await Conversation.findOne({
-                participants: {$all: [senderId, receiverId]}
-            }).populate("messages");
+            const conversation = await conversationRepository.getWithMessage(senderId, receiverId);
             if(!conversation)
                 return [];
             return conversation.messages;

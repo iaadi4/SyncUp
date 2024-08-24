@@ -11,7 +11,7 @@ const Conversation = ({conversation}) => {
 
   return (
     <div
-        className={`flex w-full h-20 cursor-pointer hover:bg-gray-900 ${selected ? "bg-gray-900": ""}`}
+        className={`flex w-full h-20 cursor-pointer ${selected ? "bg-gray-900": ""}`}
         onClick={() => dispatch(setSelected(conversation))}
     >
       <div className="flex items-center w-full mx-5">
@@ -31,7 +31,7 @@ const Conversation = ({conversation}) => {
           </div>
         </div>
         <div className="">
-            <div className="px-2 py-1 bg-neutral-900 rounded-3xl">
+            <div className="px-2 py-1 rounded-3xl">
                 <h1>40m</h1>
             </div>
         </div>

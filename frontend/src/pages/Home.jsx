@@ -60,14 +60,14 @@ const Home = () => {
   }, [dispatch, user])
 
   return (
-    <div className="flex h-screen w-screen overflow-x-auto">
+    <div className="flex h-screen w-screen overflow-x-auto overflow-y-auto">
       {loading ? (
         <div className="h-screen w-screen flex items-center justify-center">
           <div className="loading loading-ring loading-lg"></div>
         </div>
       ) : (
         <>
-          <div className="flex flex-col w-1/3 min-w-[400px] max-w-[500px] bg-black">
+          <div className="flex flex-col w-1/3 min-w-[400px] max-w-[500px]">
             <div className="flex flex-col sticky top-0 z-10">
               <div className="flex h-16 w-full">
                 <div className="flex items-center basis-[75%] lg:basis-[85%]">

@@ -5,6 +5,7 @@ import auth from '../../middlewares/authentication.js';
 const router = express.Router();
 const { signup, login, getAll } = controllers.UserController;
 const { sendMessage, getMessages } = controllers.MessageController;
+const { deleteConversation, getConversation } = controllers.ConversationController;
 
 router.post (
     '/signup',
@@ -32,6 +33,18 @@ router.get(
     '/users',
     auth,
     getAll
+)
+
+router.delete(
+    '/delete/:id',
+    auth,
+    deleteConversation
+)
+
+router.get(
+    '/conversation/:senderId/:receiverId',
+    auth,
+    getConversation
 )
 
 export default router;
