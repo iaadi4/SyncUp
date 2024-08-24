@@ -19,7 +19,7 @@ const getReceiverSocketId = (receiverId) => {
 }
 
 io.on('connection', (socket) => {
-
+    console.log('user joined', socket.id);
     const userId = socket.handshake.query.userId;
     if(userId != "undefined") {
         userSocketMap[userId] = socket.id;
@@ -31,6 +31,12 @@ io.on('connection', (socket) => {
         console.log('User disconnected', socket.id);
         delete userSocketMap[userId];
         io.emit('getOnlineUsers', Object.keys(userSocketMap));
+    })
+
+    socket.on('clearMessage', ({conversationId}) => {
+        const receiverSocketId = getReceiverSocketId(conversationId);
+        if(receiverSocketId) 
+            io.to(receiverSocketId).emit('clearMessage', {conversationId});
     })
 })
 

@@ -23,7 +23,6 @@ const Messages = () => {
 
   useEffect(() => {
     socket?.on("newMessage", (newMessage) => {
-      console.log(newMessage);
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     });
 
@@ -82,6 +81,7 @@ const Messages = () => {
             }
           })
           setMessages(null);
+          socket.emit('clearMessage', {conversationId: conversation._id});
         }
       } catch (error) {
         toast.error("Failed to delete messages, Please try again.", {
@@ -93,6 +93,18 @@ const Messages = () => {
       }
     }
   };
+
+  useEffect(() => {
+    if(conversation) {
+      socket?.on('clearMessage', ({conversationId}) => {
+        if(userId == conversationId) {
+          setMessages(null);
+        }
+      })
+
+      return () => socket?.off('clearMessage');
+    }
+  }, [conversation, socket, userId]);
 
   useEffect(() => {
     setMessage(null);
