@@ -10,6 +10,21 @@ const Signup = () => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [gender, setGender] = useState("");
+  const [image, setImage] = useState("");
+
+  const convertToBase64 = (e) => {
+    let reader = new FileReader();
+    if(e.target.files[0]) {
+      reader.readAsDataURL(e.target.files[0]);
+      reader.onload = () => {
+        setImage(reader.result);
+      }
+      reader.onerror = error => {
+        toast.error('Failed to upload file', {theme: "dark", autoClose: 2000, hideProgressBar: true});
+        console.log(error);
+      }
+    }
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,7 +39,8 @@ const Signup = () => {
         email,
         name,
         password,
-        gender
+        gender,
+        image
       })
       .then(function(response) {
         toast.success('Account created', {theme: "dark", autoClose: 2000, hideProgressBar: true});
@@ -38,7 +54,7 @@ const Signup = () => {
 
   return (
     <div className="flex h-screen items-center justify-center">
-      <div className="flex w-[360px] h-[400px] outline outline-1 outline-customBlack items-center justify-center rounded-lg">
+      <div className="flex w-[360px] h-[500px] outline outline-1 outline-customBlack items-center justify-center rounded-lg">
         <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
           <label className="input input-bordered flex items-center gap-2">
             <svg
@@ -56,7 +72,7 @@ const Signup = () => {
               value={name}
               onChange={(e) => setName(e.target.value)} />
           </label>
-          <label className="input input-bordered flex items-center gap-2 w-[300px]">
+          <label className="input input-bordered flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
@@ -95,6 +111,13 @@ const Signup = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </label>
+          <div className="mb-1">
+            <input
+              type="file"
+              className="file-input file-input-bordered h-12"
+              onChange={convertToBase64}
+            />
+          </div>
           <div className="flex gap-2 mb-8 ml-1">
             <p>Male</p>
             <input

@@ -10,7 +10,7 @@ import Message from "./Message";
 const Messages = () => {
   const conversation = useSelector((state) => state.conversation.selected);
   const [message, setMessage] = useState(null);
-  const [messages, setMessages] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const data = JSON.parse(localStorage.getItem("user"));
@@ -80,7 +80,7 @@ const Messages = () => {
               Authorization: `Bearer ${token}`
             }
           })
-          setMessages(null);
+          setMessages([]);
           socket.emit('clearMessage', {conversationId: conversation._id});
         }
       } catch (error) {
@@ -98,7 +98,7 @@ const Messages = () => {
     if(conversation) {
       socket?.on('clearMessage', ({conversationId}) => {
         if(userId == conversationId) {
-          setMessages(null);
+          setMessages([]);
         }
       })
 
@@ -149,7 +149,7 @@ const Messages = () => {
               <div className="flex ml-4">
                 <div className="avatar">
                   <div className="w-12 rounded-full">
-                    <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                    <img src={conversation.image ? conversation.image : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"} />
                   </div>
                 </div>
               </div>

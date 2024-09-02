@@ -17,8 +17,8 @@ const Conversation = ({conversation}) => {
       <div className="flex items-center w-full mx-5">
         <div className="flex basis-2/12">
         <div className={`avatar ${isOnline ? "online" : ""}`}>
-          <div className="w-14 rounded-full">
-            <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+          <div className="w-14 rounded-full"> 
+            <img src={conversation.image ? conversation.image : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"} />
           </div>
         </div>
         </div>

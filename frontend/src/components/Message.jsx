@@ -4,6 +4,8 @@ const Message = ({ message }) => {
   const conversation = useSelector((state) => state.conversation.selected);
   const isReceiver = conversation._id === message?.senderId ? true : false;
 
+  const user = useSelector((state) => state.auth.userData);
+
   const messageTime = new Date(message.createdAt);
   const formattedMessageTime = messageTime.toISOString().substring(11, 16);
 
@@ -15,7 +17,7 @@ const Message = ({ message }) => {
             <div className="w-10 rounded-full">
               <img
                 alt="Tailwind CSS chat bubble component"
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                src={conversation.image ? conversation.image : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"}
               />
             </div>
           </div>
@@ -31,7 +33,7 @@ const Message = ({ message }) => {
             <div className="w-10 rounded-full">
               <img
                 alt="Tailwind CSS chat bubble component"
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                src={user.userData.image ? user.userData.image : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"}
               />
             </div>
           </div>
