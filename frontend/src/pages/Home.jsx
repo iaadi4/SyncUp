@@ -7,21 +7,30 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
 import { setSocket, setOnlineUsers } from "../Redux/socketSlice";
+import { logout } from "../Redux/authSlice";
 import io from "socket.io-client";
+import { RiLogoutBoxLine } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const user = useSelector((state) => state.auth.userData);
+
+  const logoutUser = () => {
+    dispatch(logout())
+    navigate('/login')
+  }
 
   useEffect(() => {
     const getConversation = async () => {
       setLoading(true);
       const data = JSON.parse(localStorage.getItem("user"));
-      const token = data.userData.token;
+      const token = data?.userData?.token;
       try {
         const response = await axios.get("http://localhost:3000/api/v1/users", {
           headers: {
@@ -76,6 +85,14 @@ const Home = () => {
                   </h1>
                 </div>
                 <div className="flex items-center justify-end">
+                  <div
+                    className="flex p-2 w-12 btn btn-ghost rounded-full hover:bg-slate-900 cursor-pointer mt-1 mr-3"
+                    onClick={()=>document.getElementById('my_modal_5').showModal()}
+                  >
+                    <RiLogoutBoxLine className="w-6 h-6" />
+                  </div>
+                </div>
+                <div className="flex items-center justify-end">
                   <div className="flex p-2 w-12 btn btn-ghost rounded-full hover:bg-slate-900 cursor-pointer mt-1">
                     <FaPlus className="w-6 h-6" />
                   </div>
@@ -121,6 +138,18 @@ const Home = () => {
           </div>
         </>
       )}
+      <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Are you sure?</h3>
+          <p className="py-4">You will be logged out!</p>
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn mr-3 btn-ghost">Close</button>
+              <button className="btn" onClick={logoutUser}>Logout</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
       <ToastContainer />
     </div>
   );

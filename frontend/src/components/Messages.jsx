@@ -14,7 +14,7 @@ const Messages = () => {
   const [loading, setLoading] = useState(false);
 
   const data = JSON.parse(localStorage.getItem("user"));
-  const token = data.userData.token;
+  const token = data?.userData?.token;
 
   const onlineUsers = useSelector((state) => state.socket.onlineUsers);
   const isOnline = onlineUsers.includes(conversation?._id);
@@ -201,12 +201,12 @@ const Messages = () => {
               </div>
             </div>
           </div>
-          {loading ? (
-            <div className="flex h-full w-full  items-center justify-center">
-              <div className="loading loading-ring loading-lg"></div>
-            </div>
-          ) : (
             <div className=" grow h-[78%] overflow-y-auto">
+              {loading ? (
+                <div className="flex h-full w-full  items-center justify-center">
+                <div className="loading loading-ring loading-lg"></div>
+              </div>
+              ) : null}
               {messages
                 ? messages.map((message) => (
                     <div key={message._id} ref={lastMessageRef}>
@@ -215,7 +215,6 @@ const Messages = () => {
                   ))
                 : null}
             </div>
-          )}
           <form
             className="flex items-center min-h-16 h-[12%] bg-zinc-900 mt-auto"
             onSubmit={handleMessage}

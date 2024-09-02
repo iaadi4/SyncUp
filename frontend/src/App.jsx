@@ -13,7 +13,7 @@ function App() {
       <Routes>
           <Route path='*' element={<Error />} />
           <Route path='/' element={user ? <Home /> : <Navigate to={'/signup'} />} />
-          <Route path='/login' element={<Login />} />
+          <Route path='/login' element={user ? <Navigate to={'/'} />:<Login />} />
           <Route path='/signup' element={user ? <Navigate to={'/'} /> : <Signup />} />
       </Routes>
     </div>
