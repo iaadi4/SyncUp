@@ -3,7 +3,7 @@ import controllers from '../../controllers/index.js';
 import auth from '../../middlewares/authentication.js';
 
 const router = express.Router();
-const { signup, login, getAll } = controllers.UserController;
+const { signup, login, getAll, addFriend, getFriends } = controllers.UserController;
 const { sendMessage, getMessages } = controllers.MessageController;
 const { deleteConversation, getConversation } = controllers.ConversationController;
 
@@ -21,6 +21,18 @@ router.post(
     '/message/send/:id',
     auth,
     sendMessage
+)
+
+router.post(
+    '/addFriend/:friendId',
+    auth,
+    addFriend
+)
+
+router.get(
+    '/friends',
+    auth,
+    getFriends
 )
 
 router.get(

@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 const Home = () => {
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [friendId, setFriendId] = useState("");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -26,13 +27,49 @@ const Home = () => {
     navigate('/login')
   }
 
+  const addFriend = async () => {
+    if (!friendId) {
+      toast.error("Id cannot be empty", {
+        theme: "dark",
+        autoClose: 2000,
+        hideProgressBar: true,
+      })
+    }
+    else {
+      try {
+        const data = JSON.parse(localStorage.getItem("user"));
+        const token = data?.userData?.token;
+        const response = await axios.post(`http://localhost:3000/api/v1/addFriend/${friendId}`,{}, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        setFriendId("");
+        const friendName = response.data.data.name;
+        toast.success(`${friendName} is added.`, {
+          theme: "dark",
+          autoClose: 2000,
+          hideProgressBar: true,
+        })
+      } catch (error) {
+        setFriendId("");
+        toast.error("Failed to add user", {
+          theme: "dark",
+          autoClose: 2000,
+          hideProgressBar: true,
+        })
+        console.log(error);
+      }
+    }
+  }
+
   useEffect(() => {
     const getConversation = async () => {
       setLoading(true);
       const data = JSON.parse(localStorage.getItem("user"));
       const token = data?.userData?.token;
       try {
-        const response = await axios.get("http://localhost:3000/api/v1/users", {
+        const response = await axios.get("http://localhost:3000/api/v1/friends", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -87,13 +124,16 @@ const Home = () => {
                 <div className="flex items-center justify-end">
                   <div
                     className="flex p-2 w-12 btn btn-ghost rounded-full hover:bg-slate-900 cursor-pointer mt-1 mr-3"
-                    onClick={()=>document.getElementById('my_modal_5').showModal()}
+                    onClick={() => document.getElementById('my_modal_5').showModal()}
                   >
                     <RiLogoutBoxLine className="w-6 h-6" />
                   </div>
                 </div>
                 <div className="flex items-center justify-end">
-                  <div className="flex p-2 w-12 btn btn-ghost rounded-full hover:bg-slate-900 cursor-pointer mt-1">
+                  <div
+                    className="flex p-2 w-12 btn btn-ghost rounded-full hover:bg-slate-900 cursor-pointer mt-1"
+                    onClick={() => document.getElementById('my_modal_10').showModal()}
+                  >
                     <FaPlus className="w-6 h-6" />
                   </div>
                 </div>
@@ -146,6 +186,24 @@ const Home = () => {
             <form method="dialog">
               <button className="btn mr-3 btn-ghost">Close</button>
               <button className="btn" onClick={logoutUser}>Logout</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
+      <dialog id="my_modal_10" className="modal">
+        <div className="modal-box w-full">
+          <h3 className="font-bold text-lg mb-4">Hello!</h3>
+          <input
+            type="text"
+            placeholder="Enter friend id"
+            className="input input-bordered input-primary w-full"
+            value={friendId}
+            onChange={(e) => setFriendId(e.target.value)}
+          />
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn btn-ghost mr-3" >Close</button>
+              <button className="btn" onClick={addFriend}>Add</button>
             </form>
           </div>
         </div>

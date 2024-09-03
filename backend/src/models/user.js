@@ -20,13 +20,20 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         minLength: 6,
-        maxLength: 30
+        maxLength: 70
     },
     gender: {
         type: String,
         required: true,
         enum: ['male', 'female']
     },
+    friends: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            default: []
+        }
+    ],
     image: {
         type: String
     }
