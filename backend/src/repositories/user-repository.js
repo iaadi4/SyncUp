@@ -61,6 +61,19 @@ class UserRepository extends CrudRepository {
             throw error;
         }
     }
+
+    async removeFriend(userId, friendId) {
+        try {
+            await models.User.updateOne(
+                { _id: userId },
+                { $pull: { friends: friendId } }
+            );
+            return true;
+        } catch (error) {
+            console.log('Something went wrong in the repository layer');
+            throw error;
+        }
+    }
 }
 
 export default UserRepository;

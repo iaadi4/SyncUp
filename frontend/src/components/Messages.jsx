@@ -3,6 +3,7 @@ import { GrClearOption } from "react-icons/gr";
 import { useEffect, useRef, useState } from "react";
 import { setSelected } from "../Redux/conversationSlice";
 import { ToastContainer, toast } from "react-toastify";
+import { IoPersonRemoveSharp } from "react-icons/io5";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import Message from "./Message";
@@ -94,6 +95,31 @@ const Messages = () => {
     }
   };
 
+  const removeFriend = async () => {
+    if(conversation) {
+      try {
+        const response = await axios.patch(`http://localhost:3000/api/v1/removeFriend/${conversation._id}`, {}, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        console.log(response);
+        toast.success("User removed from your contacts", {
+          theme: "dark",
+          autoClose: 2000,
+          hideProgressBar: true,
+        });
+      } catch (error) {
+        toast.error("Failed to remove the friend", {
+          theme: "dark",
+          autoClose: 2000,
+          hideProgressBar: true,
+        });
+        console.log(error);
+      }
+    }
+  }
+
   useEffect(() => {
     if(conversation) {
       socket?.on('clearMessage', ({conversationId}) => {
@@ -169,34 +195,14 @@ const Messages = () => {
                   <GrClearOption className="w-6 h-6"/>
                 </div>
               </div>
-              <div>
-                <div className="dropdown dropdown-end">
-                  <button className="btn btn-square btn-ghost w-12 mr-4 rounded-full">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      className="inline-block h-5 w-5 stroke-current"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
-                      ></path>
-                    </svg>
-                  </button>
-                  <ul
-                    tabIndex={0}
-                    className="dropdown-content menu bg-base-100 rounded-box mt-2 z-[1] w-44 p-2 shadow"
-                  >
-                    <li>
-                      <a>Item 1</a>
-                    </li>
-                    <li>
-                      <a>Item 2</a>
-                    </li>
-                  </ul>
+              <div className="flex mr-4">
+                <div
+                  className="flex w-12 btn btn-ghost rounded-full p-2 cursor-pointer"
+                  onClick={() =>
+                    document.getElementById("my_modal_11").showModal()
+                  }
+                >
+                  <IoPersonRemoveSharp className="w-6 h-6" />
                 </div>
               </div>
             </div>
@@ -227,7 +233,6 @@ const Messages = () => {
               onChange={(e) => setMessage(e.target.value)}
             />
           </form>
-          <ToastContainer />
         </div>
       ) : null}
       <dialog id="my_modal_1" className="modal">
@@ -244,6 +249,21 @@ const Messages = () => {
           </div>
         </div>
       </dialog>
+      <dialog id="my_modal_11" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Are you sure?</h3>
+          <p className="py-4">
+            User will be removed from your contacts.
+          </p>
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn mr-3 btn-ghost">Cancel</button>
+              <button className="btn" onClick={removeFriend}>Remove</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
+      <ToastContainer />
     </div>
   );
 };

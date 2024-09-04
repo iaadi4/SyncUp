@@ -3,7 +3,7 @@ import controllers from '../../controllers/index.js';
 import auth from '../../middlewares/authentication.js';
 
 const router = express.Router();
-const { signup, login, getAll, addFriend, getFriends } = controllers.UserController;
+const { signup, login, getAll, addFriend, getFriends, removeFriend } = controllers.UserController;
 const { sendMessage, getMessages } = controllers.MessageController;
 const { deleteConversation, getConversation } = controllers.ConversationController;
 
@@ -51,6 +51,12 @@ router.delete(
     '/delete/:id',
     auth,
     deleteConversation
+)
+
+router.patch(
+    '/removeFriend/:friendId',
+    auth,
+    removeFriend
 )
 
 router.get(

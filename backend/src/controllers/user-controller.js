@@ -84,10 +84,27 @@ const getFriends = async(req, res) => {
     }
 }
 
+const removeFriend = async(req, res) => {
+    try {
+        const response = await userService.removeFriend(req.user.id, req.params.friendId);
+        return res.status(200).json({
+            data: response,
+            success: true
+        })
+    } catch (error) {
+        return res.status(500).json({
+            data: {},
+            success: false,
+            error: error
+        })
+    }
+}
+
 export default {
     signup,
     login,
     getAll,
     addFriend,
-    getFriends
+    getFriends,
+    removeFriend
 }
