@@ -3,7 +3,8 @@ import controllers from '../../controllers/index.js';
 import auth from '../../middlewares/authentication.js';
 
 const router = express.Router();
-const { signup, login, getAll, addFriend, getFriends, removeFriend } = controllers.UserController;
+const { signup, login, getAll } = controllers.UserController;
+const { addFriend, getFriends, removeFriend } = controllers.FriendController;
 const { sendMessage, getMessages } = controllers.MessageController;
 const { deleteConversation, getConversation } = controllers.ConversationController;
 
