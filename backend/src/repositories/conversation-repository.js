@@ -40,8 +40,19 @@ class ConversationRepository {
 
     async destroy(conversationId) {
         try {
-            const response = await models.Conversation.findByIdAndDelete(conversationId);
-            return response;
+            const conversation = await models.Conversation.findById(conversationId);
+            if(conversation) {
+                const messages = conversation.messages;
+                if(messages) {
+                    messages.forEach(async (id) => {
+                        const message = id.toString();
+                        await models.Message.findByIdAndDelete(message);
+                    })
+                }
+                await models.Conversation.findByIdAndDelete(conversationId);
+                return true;
+            }
+            throw new Error('Conversation not found');
         } catch (error) {
             console.log('Something went wrong in the repository layer');
             throw error;

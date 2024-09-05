@@ -1,7 +1,7 @@
 import { FaPlus } from "react-icons/fa6";
 import Conversation from "../components/Conversation";
 import Messages from "../components/Messages";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -27,7 +27,7 @@ const Home = () => {
     navigate('/login')
   }
 
-  const addFriend = async () => {
+  const addFriend = useCallback( async () => {
     if (!friendEmail) {
       toast.error("Id cannot be empty", {
         theme: "dark",
@@ -44,13 +44,16 @@ const Home = () => {
             Authorization: `Bearer ${token}`
           }
         })
+        const friendName = response?.data?.data?.name;
+        if(friendName) {
+          // React toastify official bug
+          // toast.success(`${friendName} is added.`, {
+          //   theme: "dark",
+          //   autoClose: 2000,
+          //   hideProgressBar: true,
+          // })
+        }
         setFriendEmail("");
-        const friendName = response.data.data.name;
-        toast.success(`${friendName} is added.`, {
-          theme: "dark",
-          autoClose: 2000,
-          hideProgressBar: true,
-        })
       } catch (error) {
         setFriendEmail("");
         toast.error("Failed to add user", {
@@ -61,7 +64,7 @@ const Home = () => {
         console.log(error);
       }
     }
-  }
+  }, [friendEmail])
 
   useEffect(() => {
     const getConversation = async () => {
@@ -124,7 +127,7 @@ const Home = () => {
                 <div className="flex items-center justify-end">
                   <div
                     className="flex p-2 w-12 btn btn-ghost rounded-full hover:bg-slate-900 cursor-pointer mt-1 mr-3"
-                    onClick={() => document.getElementById('my_modal_5').showModal()}
+                    onClick={() => document.getElementById('my_modal_5')?.showModal()}
                   >
                     <RiLogoutBoxLine className="w-6 h-6" />
                   </div>
@@ -132,7 +135,7 @@ const Home = () => {
                 <div className="flex items-center justify-end">
                   <div
                     className="flex p-2 w-12 btn btn-ghost rounded-full hover:bg-slate-900 cursor-pointer mt-1"
-                    onClick={() => document.getElementById('my_modal_10').showModal()}
+                    onClick={() => document.getElementById('my_modal_10')?.showModal()}
                   >
                     <FaPlus className="w-6 h-6" />
                   </div>
@@ -178,6 +181,7 @@ const Home = () => {
           </div>
         </>
       )}
+      <ToastContainer />
       <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">
           <h3 className="font-bold text-lg">Are you sure?</h3>
@@ -208,7 +212,6 @@ const Home = () => {
           </div>
         </div>
       </dialog>
-      <ToastContainer />
     </div>
   );
 };

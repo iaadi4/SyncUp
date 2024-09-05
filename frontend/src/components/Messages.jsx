@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { GrClearOption } from "react-icons/gr";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { setSelected } from "../Redux/conversationSlice";
 import { ToastContainer, toast } from "react-toastify";
 import { IoPersonRemoveSharp } from "react-icons/io5";
@@ -39,7 +39,7 @@ const Messages = () => {
     setSelected(null);
   }, []);
 
-  const handleMessage = async (e) => {
+  const handleMessage = useCallback(async (e) => {
     e.preventDefault();
     if (message) {
       try {
@@ -64,9 +64,9 @@ const Messages = () => {
         console.log(error);
       }
     }
-  };
+  }, [conversation, message, token]);
 
-  const deleteConversation = async () => {
+  const deleteConversation = useCallback(async () => {
     if(conversation) {
       try {
         const response = await axios.get(`http://localhost:3000/api/v1/conversation/${userId}/${conversation._id}`, {
@@ -93,9 +93,9 @@ const Messages = () => {
         console.log(error);
       }
     }
-  };
+  }, [conversation,socket,token, userId]);
 
-  const removeFriend = async () => {
+  const removeFriend = useCallback(async () => {
     if(conversation) {
       try {
         const response = await axios.patch(`http://localhost:3000/api/v1/removeFriend/${conversation._id}`, {}, {
@@ -118,7 +118,7 @@ const Messages = () => {
         console.log(error);
       }
     }
-  }
+  }, [conversation, token]);
 
   useEffect(() => {
     if(conversation) {
@@ -164,7 +164,7 @@ const Messages = () => {
 
   useEffect(() => {
     lastMessageRef?.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages.length]);
 
   return (
     <div className="w-full h-full min-w-[650px] overflow-x-auto">

@@ -15,7 +15,8 @@ class FriendRepositoy {
                 }
                 else {
                     user.friends.push(friendId);
-                    user.save();
+                    friend.friends.push(userId);
+                    await Promise.all([user.save(), friend.save()]);
                 }
             } 
             else {
@@ -45,6 +46,10 @@ class FriendRepositoy {
                     { _id: userId },
                     { $pull: { friends: friendId } }
                 );
+                await models.User.updateOne(
+                    {_id: friendId},
+                    { $pull : { friends: userId } }
+                )
             } else {
                 throw new Error('Friend id cant be same as user id');
             }

@@ -8,7 +8,11 @@ const store = configureStore({
         auth: authSlice,
         conversation: conversationSlice,
         socket: socketSlice
-    }
+    },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+          serializableCheck: false,
+    }),
 });
 
 export default store;
