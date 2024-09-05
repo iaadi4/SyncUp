@@ -2,18 +2,19 @@ import models from "../models/index.js"
 
 class FriendRepositoy {
     
-    async addFriend(userId, friendId) {
+    async addFriend(userId, friendEmail) {
         try {
-            if(userId ==  friendId)
-                throw new Error('Friend id cant be same as user id');
             const user = await models.User.findById(userId);
-            const friend = await models.User.findById(friendId);
+            const friend = await models.User.findOne({email: friendEmail});
             if(friend) {
+                const friendId = friend._id;
+                if(userId ==  friendId)
+                    throw new Error('Friend id cant be same as user id');
                 if(user.friends.includes(friendId)) {
                     throw new Error('User already exist in friend list');
                 }
                 else {
-                    user.friends.push(friend);
+                    user.friends.push(friendId);
                     user.save();
                 }
             } 

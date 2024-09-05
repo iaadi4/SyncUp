@@ -6,9 +6,9 @@ class FriendService {
         this.friendRepositoy = new repositories.FriendRepositoy();
     }
 
-    async addFriend(userId, friendId) {
+    async addFriend(userId, friendEmail) {
         try {
-            const response = await this.friendRepositoy.addFriend(userId, friendId);
+            const response = await this.friendRepositoy.addFriend(userId, friendEmail);
             return response;
         } catch (error) {
             console.log('Something went wrong in the service layer');

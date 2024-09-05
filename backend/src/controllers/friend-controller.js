@@ -4,7 +4,7 @@ const friendService = new FriendService();
 
 const addFriend = async(req, res) => {
     try {
-        const response = await friendService.addFriend(req.user.id, req.params.friendId);
+        const response = await friendService.addFriend(req.user.id, req.params.friendEmail);
         return res.status(200).json({
             data: response,
             success: true

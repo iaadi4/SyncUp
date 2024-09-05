@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 const Home = () => {
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [friendId, setFriendId] = useState("");
+  const [friendEmail, setFriendEmail] = useState("");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const Home = () => {
   }
 
   const addFriend = async () => {
-    if (!friendId) {
+    if (!friendEmail) {
       toast.error("Id cannot be empty", {
         theme: "dark",
         autoClose: 2000,
@@ -39,12 +39,12 @@ const Home = () => {
       try {
         const data = JSON.parse(localStorage.getItem("user"));
         const token = data?.userData?.token;
-        const response = await axios.post(`http://localhost:3000/api/v1/addFriend/${friendId}`,{}, {
+        const response = await axios.post(`http://localhost:3000/api/v1/addFriend/${friendEmail}`,{}, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         })
-        setFriendId("");
+        setFriendEmail("");
         const friendName = response.data.data.name;
         toast.success(`${friendName} is added.`, {
           theme: "dark",
@@ -52,7 +52,7 @@ const Home = () => {
           hideProgressBar: true,
         })
       } catch (error) {
-        setFriendId("");
+        setFriendEmail("");
         toast.error("Failed to add user", {
           theme: "dark",
           autoClose: 2000,
@@ -192,13 +192,13 @@ const Home = () => {
       </dialog>
       <dialog id="my_modal_10" className="modal">
         <div className="modal-box w-full">
-          <h3 className="font-bold text-lg mb-4">Hello!</h3>
+          <h3 className="font-bold text-lg mb-4">Add Contact</h3>
           <input
             type="text"
-            placeholder="Enter friend id"
+            placeholder="Enter contact's email"
             className="input input-bordered input-primary w-full"
-            value={friendId}
-            onChange={(e) => setFriendId(e.target.value)}
+            value={friendEmail}
+            onChange={(e) => setFriendEmail(e.target.value)}
           />
           <div className="modal-action">
             <form method="dialog">

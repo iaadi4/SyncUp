@@ -25,7 +25,7 @@ router.post(
 )
 
 router.post(
-    '/addFriend/:friendId',
+    '/addFriend/:friendEmail',
     auth,
     addFriend
 )
