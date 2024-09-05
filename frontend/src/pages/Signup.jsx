@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
@@ -12,17 +12,25 @@ const Signup = () => {
   const [gender, setGender] = useState("");
   const [image, setImage] = useState("");
 
+  const navigate = useNavigate();
+
   const convertToBase64 = (e) => {
     let reader = new FileReader();
     if(e.target.files[0]) {
-      reader.readAsDataURL(e.target.files[0]);
-      reader.onload = () => {
-        setImage(reader.result);
-      }
-      reader.onerror = error => {
-        toast.error('Failed to upload file', {theme: "dark", autoClose: 2000, hideProgressBar: true});
-        console.log(error);
-      }
+      if(e.target.files[0].size > 5 * 1000 * 1024) {
+        toast.error(`File can't be bigger than 5mb`, {theme: "dark", autoClose: 2000, hideProgressBar: true});
+        setImage("");
+        e.target.value = "";
+      } else {
+        reader.readAsDataURL(e.target.files[0]);
+        reader.onload = () => {
+          setImage(reader.result);
+        }
+        reader.onerror = error => {
+          toast.error('Failed to upload file', {theme: "dark", autoClose: 2000, hideProgressBar: true});
+          console.log(error);
+        }
+      } 
     }
   }
 
@@ -44,6 +52,16 @@ const Signup = () => {
       })
       .then(function(response) {
         toast.success('Account created', {theme: "dark", autoClose: 2000, hideProgressBar: true});
+        setEmail("");
+        setName("");
+        setPassword("");
+        setGender("");
+        setImage("");
+        const fileInput = document.getElementById('fileInput');
+        fileInput.value = "";
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000)
       })
       .catch(function(error) {
         console.error('Error:', error);
@@ -113,6 +131,7 @@ const Signup = () => {
           </label>
           <div className="mb-1">
             <input
+              id = "fileInput"
               type="file"
               className="file-input file-input-bordered h-12"
               onChange={convertToBase64}
