@@ -17,12 +17,13 @@ const Home = () => {
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [friendEmail, setFriendEmail] = useState("");
+  const [search, setSearch] = useState("");
+  const [result, setResult] = useState([]);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const reload  = useSelector((state) => state.refresh.reload);
-
+  const reload = useSelector((state) => state.refresh.reload);
   const user = useSelector((state) => state.auth.userData);
 
   const logoutUser = () => {
@@ -30,7 +31,22 @@ const Home = () => {
     navigate('/login')
   }
 
-  const addFriend = useCallback( async () => {
+  useEffect(() => {
+    const searchUser = () => {
+      if (search.trim() != "" && conversations) {
+        const allUsers = conversations.filter((convo) => {
+          return convo.name.toLowerCase().startsWith(search.toLowerCase());
+        })
+        setResult(allUsers);
+      }
+      if (search.trim() == "") {
+        setResult([]);
+      }
+    }
+    searchUser();
+  }, [search, conversations])
+
+  const addFriend = useCallback(async () => {
     if (!friendEmail) {
       toast.error("Id cannot be empty", {
         theme: "dark",
@@ -42,13 +58,13 @@ const Home = () => {
       try {
         const data = JSON.parse(localStorage.getItem("user"));
         const token = data?.userData?.token;
-        const response = await axios.post(`http://localhost:3000/api/v1/addFriend/${friendEmail}`,{}, {
+        const response = await axios.post(`http://localhost:3000/api/v1/addFriend/${friendEmail}`, {}, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         })
         const friendName = response?.data?.data?.name;
-        if(friendName) {
+        if (friendName) {
           // React toastify official bug
           // toast.success(`${friendName} is added.`, {
           //   theme: "dark",
@@ -68,7 +84,7 @@ const Home = () => {
         console.log(error);
       }
     }
-  }, [friendEmail])
+  }, [friendEmail, dispatch])
 
   useEffect(() => {
     const getConversation = async () => {
@@ -95,7 +111,7 @@ const Home = () => {
       }
     };
     getConversation();
-  }, [reload]);
+  }, [reload, dispatch]);
 
   useEffect(() => {
     const socket = io('localhost:3000', {
@@ -148,7 +164,13 @@ const Home = () => {
               </div>
               <div className="flex m-4">
                 <label className="input input-bordered flex items-center gap-2 w-full h-10">
-                  <input type="text" className="grow" placeholder="Search" />
+                  <input
+                    type="text"
+                    className="grow"
+                    placeholder="Search"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 16 16"
@@ -173,12 +195,23 @@ const Home = () => {
               </div>
             </div>
             <div className="flex-1 overflow-y-auto">
-              {conversations.map((conversation) => (
-                <Conversation
-                  key={conversation._id}
-                  conversation={conversation}
-                />
-              ))}
+              {search.length === 0 ? (
+                conversations.map((conversation) => (
+                  <Conversation
+                    key={conversation._id}
+                    conversation={conversation}
+                  />
+                ))
+              ) : result.length === 0 ? (
+                <h1>Empty</h1>
+              ) : (
+                result.map((conversation) => (
+                  <Conversation
+                    key={conversation._id}
+                    conversation={conversation}
+                  />
+                ))
+              )}
             </div>
           </div>
           <div className="flex h-full w-2/3 grow">

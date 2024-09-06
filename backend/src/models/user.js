@@ -39,13 +39,16 @@ const userSchema = new mongoose.Schema({
     }
 }, {timestamps: true});
 
-userSchema.pre('save', function(next) {
+userSchema.pre('save', async function(next) {
     const user = this;
-    const salt = bcrypt.genSaltSync(10);
-    const encryptedPassword = bcrypt.hashSync(user.password, salt);
-    user.password = encryptedPassword;
+    if (user.isModified('password')) {
+        const salt = bcrypt.genSaltSync(10);
+        const encryptedPassword = await bcrypt.hashSync(user.password, salt);
+        user.password = encryptedPassword;
+    }
     next();
 });
+
 
 userSchema.methods.comparePassword = function compare(password) {
     return bcrypt.compareSync(password, this.password);

@@ -77,7 +77,6 @@ const Login = () => {
           <button
             type="submit"
             className="btn btn-primary"
-            onSubmit={handleSubmit}
           >
             Submit
           </button>
