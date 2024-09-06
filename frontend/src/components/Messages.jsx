@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { GrClearOption } from "react-icons/gr";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { setSelected } from "../Redux/conversationSlice";
@@ -7,12 +7,15 @@ import { IoPersonRemoveSharp } from "react-icons/io5";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import Message from "./Message";
+import { setReload } from "../Redux/reloadSlice";
 
 const Messages = () => {
   const conversation = useSelector((state) => state.conversation.selected);
   const [message, setMessage] = useState(null);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const dispatch = useDispatch();
 
   const data = JSON.parse(localStorage.getItem("user"));
   const token = data?.userData?.token;
@@ -103,7 +106,7 @@ const Messages = () => {
             Authorization: `Bearer ${token}`
           }
         });
-        console.log(response);
+        dispatch(setReload(true));
         toast.success("User removed from your contacts", {
           theme: "dark",
           autoClose: 2000,
@@ -118,7 +121,7 @@ const Messages = () => {
         console.log(error);
       }
     }
-  }, [conversation, token]);
+  }, [conversation, token, dispatch]);
 
   useEffect(() => {
     if(conversation) {

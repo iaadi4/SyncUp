@@ -11,6 +11,7 @@ import { logout } from "../Redux/authSlice";
 import io from "socket.io-client";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
+import { setReload } from "../Redux/reloadSlice";
 
 const Home = () => {
   const [conversations, setConversations] = useState([]);
@@ -19,6 +20,8 @@ const Home = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const reload  = useSelector((state) => state.refresh.reload);
 
   const user = useSelector((state) => state.auth.userData);
 
@@ -53,6 +56,7 @@ const Home = () => {
           //   hideProgressBar: true,
           // })
         }
+        dispatch(setReload(true));
         setFriendEmail("");
       } catch (error) {
         setFriendEmail("");
@@ -87,10 +91,11 @@ const Home = () => {
         console.log(error);
       } finally {
         setLoading(false);
+        dispatch(setReload(false));
       }
     };
     getConversation();
-  }, []);
+  }, [reload]);
 
   useEffect(() => {
     const socket = io('localhost:3000', {
