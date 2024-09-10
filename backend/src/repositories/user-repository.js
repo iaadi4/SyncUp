@@ -28,6 +28,16 @@ class UserRepository extends CrudRepository {
             throw error;
         }
     }
+
+    async getFavourites(userId) {
+        try {
+            const user = await models.User.findById(userId).populate('favourites');
+            return user.favourites;
+        } catch (error) {
+            console.log('Something went wrong in the repository layer');
+            throw error;
+        }
+    }
 }
 
 export default UserRepository;

@@ -61,6 +61,16 @@ class UserService {
             throw error;
         }
     }
+
+    async getFavourites(userId) {
+        try {
+            const favourites = await this.userRepository.getFavourites(userId);
+            return favourites;
+        } catch (error) {
+            console.log('Something went wrong in the service layer');
+            throw error;
+        }
+    }
 }
 
 export default UserService;

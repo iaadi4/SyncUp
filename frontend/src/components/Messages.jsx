@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { setSelected } from "../Redux/conversationSlice";
 import { ToastContainer, toast } from "react-toastify";
 import { IoPersonRemoveSharp } from "react-icons/io5";
+import { GoStar } from "react-icons/go";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import Message from "./Message";
@@ -70,7 +71,7 @@ const Messages = () => {
   }, [conversation, message, token]);
 
   const deleteConversation = useCallback(async () => {
-    if(conversation) {
+    if (conversation) {
       try {
         const response = await axios.get(`http://localhost:3000/api/v1/conversation/${userId}/${conversation._id}`, {
           headers: {
@@ -78,14 +79,14 @@ const Messages = () => {
           }
         });
         const id = response.data?.data?._id;
-        if(id) {
+        if (id) {
           await axios.delete(`http://localhost:3000/api/v1/delete/${id}`, {
             headers: {
               Authorization: `Bearer ${token}`
             }
           })
           setMessages([]);
-          socket.emit('clearMessage', {conversationId: conversation._id});
+          socket.emit('clearMessage', { conversationId: conversation._id });
         }
       } catch (error) {
         toast.error("Failed to delete messages, Please try again.", {
@@ -96,12 +97,12 @@ const Messages = () => {
         console.log(error);
       }
     }
-  }, [conversation,socket,token, userId]);
+  }, [conversation, socket, token, userId]);
 
   const removeFriend = useCallback(async () => {
-    if(conversation) {
+    if (conversation) {
       try {
-        const response = await axios.patch(`http://localhost:3000/api/v1/removeFriend/${conversation._id}`, {}, {
+        await axios.patch(`http://localhost:3000/api/v1/removeFriend/${conversation._id}`, {}, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -123,10 +124,30 @@ const Messages = () => {
     }
   }, [conversation, token, dispatch]);
 
-  useEffect(() => {
+  const toggleFavourite = useCallback(async () => {
     if(conversation) {
-      socket?.on('clearMessage', ({conversationId}) => {
-        if(userId == conversationId) {
+      try {
+        await axios.post(`http://localhost:3000/api/v1/favourite/${conversation._id}`, {}, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        dispatch(setReload(true));
+      } catch (error) {
+        toast.error("Failed to remove the friend", {
+          theme: "dark",
+          autoClose: 2000,
+          hideProgressBar: true,
+        });
+        console.log(error);
+      }
+    }
+  }, [conversation, token, dispatch]);
+
+  useEffect(() => {
+    if (conversation) {
+      socket?.on('clearMessage', ({ conversationId }) => {
+        if (userId == conversationId) {
           setMessages([]);
         }
       })
@@ -188,42 +209,48 @@ const Messages = () => {
                   {isOnline ? <span>ACTIVE NOW</span> : <span>OFFLINE</span>}
                 </div>
               </div>
-              <div className="flex ml-auto mr-4">
+              <div className="flex ml-auto mr-3">
                 <div
-                  className="flex w-12 btn btn-ghost rounded-full p-2 cursor-pointer"
+                  className="flex w-12 btn btn-ghost rounded-full p-2 cursor-pointer mr-3"
+                  onClick={toggleFavourite}
+                >
+                  <GoStar className="w-6 h-6" />
+                </div>
+                <div
+                  className="flex w-12 btn btn-ghost rounded-full p-2 cursor-pointer mr-3"
                   onClick={() =>
                     document.getElementById("my_modal_1").showModal()
                   }
                 >
-                  <GrClearOption className="w-6 h-6"/>
+                  <GrClearOption className="w-6 h-6" />
                 </div>
-              </div>
-              <div className="flex mr-4">
-                <div
-                  className="flex w-12 btn btn-ghost rounded-full p-2 cursor-pointer"
-                  onClick={() =>
-                    document.getElementById("my_modal_11").showModal()
-                  }
-                >
-                  <IoPersonRemoveSharp className="w-6 h-6" />
+                <div className="flex mr-4">
+                  <div
+                    className="flex w-12 btn btn-ghost rounded-full p-2 cursor-pointer"
+                    onClick={() =>
+                      document.getElementById("my_modal_11").showModal()
+                    }
+                  >
+                    <IoPersonRemoveSharp className="w-6 h-6" />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-            <div className=" grow h-[78%] overflow-y-auto">
-              {loading ? (
-                <div className="flex h-full w-full  items-center justify-center">
+          <div className=" grow h-[78%] overflow-y-auto">
+            {loading ? (
+              <div className="flex h-full w-full  items-center justify-center">
                 <div className="loading loading-ring loading-lg"></div>
               </div>
-              ) : null}
-              {messages
-                ? messages.map((message) => (
-                    <div key={message._id} ref={lastMessageRef}>
-                      <Message message={message} />
-                    </div>
-                  ))
-                : null}
-            </div>
+            ) : null}
+            {messages
+              ? messages.map((message) => (
+                <div key={message._id} ref={lastMessageRef}>
+                  <Message message={message} />
+                </div>
+              ))
+              : null}
+          </div>
           <form
             className="flex items-center min-h-16 h-[12%] bg-zinc-900 mt-auto"
             onSubmit={handleMessage}

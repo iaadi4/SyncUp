@@ -68,9 +68,26 @@ const favourite = async(req, res) => {
     }
 }
 
+const getFavourite = async(req, res) => {
+    try {
+        const response = await userService.getFavourites(req.user.id);
+        return res.status(200).json({
+            data: response,
+            success: true
+        })
+    } catch (error) {
+        return res.status(500).json({
+            data: {},
+            error: error,
+            success: false
+        })
+    }
+}
+
 export default {
     signup,
     login,
     getAll,
-    favourite
+    favourite,
+    getFavourite
 }

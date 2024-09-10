@@ -15,10 +15,12 @@ import { setReload } from "../Redux/reloadSlice";
 
 const Home = () => {
   const [conversations, setConversations] = useState([]);
+  const [favourite, setFavourites] = useState([])
   const [loading, setLoading] = useState(false);
   const [friendEmail, setFriendEmail] = useState("");
   const [search, setSearch] = useState("");
   const [result, setResult] = useState([]);
+  const [selected, setSelected] = useState(1);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -64,15 +66,14 @@ const Home = () => {
           }
         })
         const friendName = response?.data?.data?.name;
-        if (friendName) {
-          // React toastify official bug
-          // toast.success(`${friendName} is added.`, {
-          //   theme: "dark",
-          //   autoClose: 2000,
-          //   hideProgressBar: true,
-          // })
-        }
         dispatch(setReload(true));
+        if (friendName) {
+          toast.success(`${friendName} is added.`, {
+            theme: "dark",
+            autoClose: 2000,
+            hideProgressBar: true,
+          })
+        }
         setFriendEmail("");
       } catch (error) {
         setFriendEmail("");
@@ -112,6 +113,29 @@ const Home = () => {
     };
     getConversation();
   }, [reload, dispatch]);
+
+  useEffect(() => {
+    const getFavourites = async () => {
+      const data = JSON.parse(localStorage.getItem("user"));
+      const token = data?.userData?.token;
+      try {
+        const response = await axios.get('http://localhost:3000/api/v1/favourite/get', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setFavourites(response.data?.data);
+      } catch (error) {
+        toast.error("Failed to fetch favourites", {
+          theme: "dark",
+          autoClose: 2000,
+          hideProgressBar: true,
+        })
+        console.log(error);
+      }
+    }
+    getFavourites();
+  }, [reload])
 
   useEffect(() => {
     const socket = io('localhost:3000', {
@@ -186,22 +210,41 @@ const Home = () => {
                 </label>
               </div>
               <div className="flex justify-evenly h-10 items-center mb-6">
-                <h1 className="text-sm cursor-pointer font-semibold text-white underline underline-offset-4 decoration-[1.5px] de">
-                  ACTIVE NOW
+                <h1
+                  className={`text-sm cursor-pointer font-semibold text-white ${selected == 1 ? 'underline underline-offset-4 decoration-[1.5px]': ''}`}
+                  onClick={(() => setSelected(1))}
+                >
+                  FAVOURITES
                 </h1>
-                <h1 className="text-sm cursor-pointer hover:text-white">
+                <h1
+                  className={`text-sm cursor-pointer font-semibold text-white ${selected == 2 ? 'underline underline-offset-4 decoration-[1.5px]': ''}`}
+                  onClick={(() => setSelected(2))}
+                >
                   CONTACTS
                 </h1>
               </div>
             </div>
             <div className="flex-1 overflow-y-auto">
               {search.length === 0 ? (
-                conversations.map((conversation) => (
-                  <Conversation
-                    key={conversation._id}
-                    conversation={conversation}
-                  />
-                ))
+                selected === 1 ? (
+                  favourite.length === 0 ? (
+                    <h1>empty</h1>
+                  ) : (
+                    favourite.map((conversation) => (
+                      <Conversation
+                        key={conversation._id}
+                        conversation={conversation}
+                      />
+                    ))
+                  )
+                ) : (
+                  conversations.map((conversation) => (
+                    <Conversation
+                      key={conversation._id}
+                      conversation={conversation}
+                    />
+                  ))
+                )
               ) : result.length === 0 ? (
                 <h1>Empty</h1>
               ) : (
