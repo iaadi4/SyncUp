@@ -3,7 +3,7 @@ import controllers from '../../controllers/index.js';
 import auth from '../../middlewares/authentication.js';
 
 const router = express.Router();
-const { signup, login, getAll } = controllers.UserController;
+const { signup, login, getAll, favourite } = controllers.UserController;
 const { addFriend, getFriends, removeFriend } = controllers.FriendController;
 const { sendMessage, getMessages } = controllers.MessageController;
 const { deleteConversation, getConversation } = controllers.ConversationController;
@@ -64,6 +64,12 @@ router.get(
     '/conversation/:senderId/:receiverId',
     auth,
     getConversation
+)
+
+router.post(
+    '/user/favourite/:contactId',
+    auth, 
+    favourite
 )
 
 export default router;

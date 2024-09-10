@@ -22,12 +22,14 @@ const userSchema = new mongoose.Schema({
         minLength: 6,
         maxLength: 150
     },
-    gender: {
-        type: String,
-        required: true,
-        enum: ['male', 'female']
-    },
     friends: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            default: []
+        }
+    ],
+    favourites: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',

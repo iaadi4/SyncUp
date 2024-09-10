@@ -1,4 +1,6 @@
 import repositories from '../repositories/index.js';
+import models from '../models/index.js';
+import mongoose from 'mongoose';
 
 class UserService {
 
@@ -38,6 +40,24 @@ class UserService {
             return users;
         } catch (error) {
             console.log('something went wrong in the service layer');
+            throw error;
+        }
+    }
+
+    async favourite(userId, contactId) {
+        try {
+            const user = await models.User.findById(userId);
+            if(user.favourites.includes(contactId)) {
+                user.favourites = user.favourites.filter((id) => !id.equals(contactId));
+                await user.save();
+                return false;
+            } else {
+                user.favourites.push(contactId);
+                await user.save();
+            }
+            return true;
+        } catch (error) {
+            console.log('Something went wrong in the service layer');
             throw error;
         }
     }

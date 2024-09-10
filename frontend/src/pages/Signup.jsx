@@ -9,7 +9,6 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [gender, setGender] = useState("");
   const [image, setImage] = useState("");
 
   const navigate = useNavigate();
@@ -36,7 +35,7 @@ const Signup = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if(!email || !name || !password || !gender)
+    if(!email || !name || !password)
       toast.error('Fill out all inputs', {theme: "dark", autoClose: 2000, hideProgressBar: true});
     else if(name.length < 3 || name.length > 50)
       toast.error('Name must be 3-50 characters', {theme: "dark", autoClose: 2000, hideProgressBar: true});
@@ -47,7 +46,6 @@ const Signup = () => {
         email,
         name,
         password,
-        gender,
         image
       })
       .then(function(response) {
@@ -55,7 +53,6 @@ const Signup = () => {
         setEmail("");
         setName("");
         setPassword("");
-        setGender("");
         setImage("");
         const fileInput = document.getElementById('fileInput');
         fileInput.value = "";
@@ -135,22 +132,6 @@ const Signup = () => {
               type="file"
               className="file-input file-input-bordered h-12"
               onChange={convertToBase64}
-            />
-          </div>
-          <div className="flex gap-2 mb-8 ml-1">
-            <p>Male</p>
-            <input
-              type="radio"
-              name="radio-2"
-              className="radio radio-primary mr-12"
-              onClick={() => setGender('male')}
-            />
-            <p>Female</p>
-            <input
-              type="radio"
-              name="radio-2"
-              className="radio radio-primary"
-              onClick={() => setGender('female')}
             />
           </div>
           <button
