@@ -17,6 +17,7 @@ const Messages = () => {
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
+  const lastMessageRef = useRef();
 
   const data = JSON.parse(localStorage.getItem("user"));
   const token = data?.userData?.token;
@@ -25,17 +26,6 @@ const Messages = () => {
   const isOnline = onlineUsers.includes(conversation?._id);
 
   const socket = useSelector((state) => state.socket.instance);
-
-  useEffect(() => {
-    socket?.on("newMessage", (newMessage) => {
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-    });
-
-    return () => socket?.off("newMessage");
-  }, [socket, setMessages, messages]);
-
-  const lastMessageRef = useRef();
-
   const user = useSelector((state) => state.auth.userData);
   const userId = user.userData._id;
 
@@ -43,13 +33,23 @@ const Messages = () => {
     setSelected(null);
   }, []);
 
+  useEffect(() => {
+    socket?.on("newMessage", (newMessage) => {
+      if (newMessage.senderId === conversation?._id) {
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+      }
+    });
+
+    return () => socket?.off("newMessage");
+  }, [socket, setMessages, messages, conversation]);
+
   const handleMessage = useCallback(async (e) => {
     e.preventDefault();
     if (message) {
       try {
         const res = await axios.post(
           `http://localhost:3000/api/v1/message/send/${conversation._id}`,
-          { message: message },
+          { message: message, status: 'sent' },
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -157,7 +157,6 @@ const Messages = () => {
   }, [conversation, socket, userId]);
 
   useEffect(() => {
-    setMessage(null);
     const getMessages = async () => {
       setLoading(true);
       if (conversation) {

@@ -6,7 +6,7 @@ const router = express.Router();
 const { signup, login, getAll, favourite, getFavourite } = controllers.UserController;
 const { addFriend, getFriends, removeFriend } = controllers.FriendController;
 const { sendMessage, getMessages } = controllers.MessageController;
-const { deleteConversation, getConversation } = controllers.ConversationController;
+const { deleteConversation, getConversation, getWithMessages } = controllers.ConversationController;
 
 router.post (
     '/signup',
@@ -64,6 +64,12 @@ router.get(
     '/conversation/:senderId/:receiverId',
     auth,
     getConversation
+)
+
+router.get(
+    '/conversation/messages/:senderId/:receiverId',
+    auth,
+    getWithMessages
 )
 
 router.post(

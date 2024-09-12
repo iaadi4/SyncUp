@@ -32,7 +32,23 @@ const getConversation = async(req, res) => {
     }
 }
 
+const getWithMessages = async(req, res) => {
+    try {
+        const messages = await conversationRepository.getWithMessage(req.params.senderId, req.params.receiverId);
+        return res.status(200).json({
+            data: messages,
+            success: true
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            error: error
+        })
+    }
+}
+
 export default {
     deleteConversation,
-    getConversation
+    getConversation,
+    getWithMessages
 }
