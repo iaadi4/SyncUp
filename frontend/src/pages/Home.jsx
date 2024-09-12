@@ -1,17 +1,17 @@
-import { FaPlus } from "react-icons/fa6";
+import axios from "axios";
+import io from "socket.io-client";
 import Conversation from "../components/Conversation";
 import Messages from "../components/Messages";
-import { useCallback, useEffect, useState } from "react";
-import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { setSocket, setOnlineUsers } from "../Redux/socketSlice";
 import { logout } from "../Redux/authSlice";
-import io from "socket.io-client";
-import { RiLogoutBoxLine } from "react-icons/ri";
-import { useNavigate } from "react-router-dom";
 import { setReload } from "../Redux/reloadSlice";
+import { RiLogoutBoxLine } from "react-icons/ri";
+import { FaPlus } from "react-icons/fa6";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Home = () => {
   const [conversations, setConversations] = useState([]);
@@ -19,7 +19,6 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const [friendEmail, setFriendEmail] = useState("");
   const [search, setSearch] = useState("");
-  const [result, setResult] = useState([]);
   const [selected, setSelected] = useState(1);
 
   const dispatch = useDispatch();
@@ -33,20 +32,25 @@ const Home = () => {
     navigate('/login')
   }
 
-  useEffect(() => {
-    const searchUser = () => {
-      if (search.trim() != "" && conversations) {
-        const allUsers = conversations.filter((convo) => {
-          return convo.name.toLowerCase().startsWith(search.toLowerCase());
-        })
-        setResult(allUsers);
-      }
-      if (search.trim() == "") {
-        setResult([]);
-      }
+  const searchUser = useMemo(() => {
+    if (search.trim() != "" && conversations) {
+      return conversations.filter((convo) => 
+        convo.name.toLowerCase().startsWith(search.toLowerCase())
+      )
     }
-    searchUser();
-  }, [search, conversations])
+    return []
+  }, [conversations, search])
+
+  const displayedConversations = useMemo(() => {
+    if(search.length == 0) {
+      if(selected == 1)
+        return favourite.length > 0 ? favourite : null;
+      else
+        return conversations.length > 0 ? conversations : null;
+    }
+    else 
+      return searchUser;
+  }, [favourite, search, selected, conversations, searchUser])
 
   const addFriend = useCallback(async () => {
     if (!friendEmail) {
@@ -211,13 +215,13 @@ const Home = () => {
               </div>
               <div className="flex justify-evenly h-10 items-center mb-6">
                 <h1
-                  className={`text-sm cursor-pointer font-semibold text-white ${selected == 1 ? 'underline underline-offset-4 decoration-[1.5px]': ''}`}
+                  className={`text-sm cursor-pointer font-semibold ${selected == 1 ? 'underline underline-offset-4 decoration-[1.5px] text-white': ''}`}
                   onClick={(() => setSelected(1))}
                 >
                   FAVOURITES
                 </h1>
                 <h1
-                  className={`text-sm cursor-pointer font-semibold text-white ${selected == 2 ? 'underline underline-offset-4 decoration-[1.5px]': ''}`}
+                  className={`text-sm cursor-pointer font-semibold ${selected == 2 ? 'underline underline-offset-4 decoration-[1.5px] text-white': ''}`}
                   onClick={(() => setSelected(2))}
                 >
                   CONTACTS
@@ -225,35 +229,12 @@ const Home = () => {
               </div>
             </div>
             <div className="flex-1 overflow-y-auto">
-              {search.length === 0 ? (
-                selected === 1 ? (
-                  favourite.length === 0 ? (
-                    <h1>empty</h1>
-                  ) : (
-                    favourite.map((conversation) => (
-                      <Conversation
-                        key={conversation._id}
-                        conversation={conversation}
-                      />
-                    ))
-                  )
-                ) : (
-                  conversations.map((conversation) => (
-                    <Conversation
-                      key={conversation._id}
-                      conversation={conversation}
-                    />
-                  ))
-                )
-              ) : result.length === 0 ? (
-                <h1>Empty</h1>
-              ) : (
-                result.map((conversation) => (
-                  <Conversation
-                    key={conversation._id}
-                    conversation={conversation}
-                  />
+            {displayedConversations ? (
+                displayedConversations.map((conversation) => (
+                  <Conversation key={conversation._id} conversation={conversation} />
                 ))
+              ) : (
+                <h1>Empty</h1>
               )}
             </div>
           </div>
