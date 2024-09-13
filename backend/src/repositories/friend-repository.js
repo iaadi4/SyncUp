@@ -47,6 +47,10 @@ class FriendRepositoy {
                     { $pull: { friends: friendId } }
                 );
                 await models.User.updateOne(
+                    { _id: userId },
+                    { $pull: { favourites: friendId }}
+                )
+                await models.User.updateOne(
                     {_id: friendId},
                     { $pull : { friends: userId } }
                 )

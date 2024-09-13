@@ -27,11 +27,12 @@ const Messages = () => {
 
   const socket = useSelector((state) => state.socket.instance);
   const user = useSelector((state) => state.auth.userData);
+  const reload = useSelector((state) => state.refresh.reload);
   const userId = user.userData._id;
 
   useEffect(() => {
     setSelected(null);
-  }, []);
+  }, [reload]);
 
   useEffect(() => {
     socket?.on("newMessage", (newMessage) => {
@@ -127,14 +128,15 @@ const Messages = () => {
   const toggleFavourite = useCallback(async () => {
     if(conversation) {
       try {
-        await axios.post(`http://localhost:3000/api/v1/favourite/${conversation._id}`, {}, {
+        const response = await axios.post(`http://localhost:3000/api/v1/favourite/${conversation._id}`, {}, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
+        console.log(response.data.data)
         dispatch(setReload(true));
       } catch (error) {
-        toast.error("Failed to remove the friend", {
+        toast.error("Failed! Please try again later", {
           theme: "dark",
           autoClose: 2000,
           hideProgressBar: true,
@@ -251,7 +253,7 @@ const Messages = () => {
               : null}
           </div>
           <form
-            className="flex items-center min-h-16 h-[12%] bg-zinc-900 mt-auto"
+            className="flex items-center min-h-16 h-[12%] bg-zinc-900"
             onSubmit={handleMessage}
           >
             <input

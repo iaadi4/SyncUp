@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { setSelected } from "../Redux/conversationSlice";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -15,47 +15,63 @@ const Conversation = ({ conversation }) => {
   const [lastMessageTime, setLastMessageTime] = useState('');
 
   const user = useSelector((state) => state.auth.userData);
+  const socket = useSelector((state) => state.socket.instance);
   const userId = user.userData._id;
 
   const data = JSON.parse(localStorage.getItem("user"));
   const token = data?.userData?.token;
 
-  useEffect(() => {
-    const getId = async () => {
-      try {
-        const response = await axios.get(`http://localhost:3000/api/v1/conversation/messages/${userId}/${conversation._id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        })
-        const messages = response.data?.data?.messages;
-
-        const otherUserMessages = messages?.filter(
-          (message) => message.senderId !== userId
-        );
-
-        if (otherUserMessages && otherUserMessages.length > 0) {
-          const lastMessage = otherUserMessages[otherUserMessages.length - 1];
-          setLastMessage(lastMessage.message);
-          const now = new Date();
-          const messageDate = new Date(lastMessage.createdAt);
-          const isOlderThanToday = messageDate.toDateString() !== now.toDateString();
-          if (isOlderThanToday) {
-            const formattedDate = messageDate.toLocaleDateString();
-            setLastMessageTime(formattedDate);
-          } else {
-            const formattedTime = messageDate.toISOString().substring(11, 16);
-            setLastMessageTime(formattedTime);
-          }
-        } else {
-          setLastMessage("");
+  const getId = useCallback(async () => {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/v1/conversation/messages/${userId}/${conversation._id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
         }
-      } catch (error) {
-        console.log(error);
+      })
+      const messages = response.data?.data?.messages;
+
+      const otherUserMessages = messages?.filter(
+        (message) => message.senderId !== userId
+      );
+
+      if (otherUserMessages && otherUserMessages.length > 0) {
+        let lastMessage = otherUserMessages[otherUserMessages.length - 1];
+        if(lastMessage.message.length > 40) {
+          lastMessage.message = lastMessage.message.substring(0,40)
+          lastMessage.message += '...'
+        }
+        setLastMessage(lastMessage.message);
+        const now = new Date();
+        const messageDate = new Date(lastMessage.createdAt);
+        const isOlderThanToday = messageDate.toDateString() !== now.toDateString();
+        if (isOlderThanToday) {
+          const formattedDate = messageDate.toLocaleDateString();
+          setLastMessageTime(formattedDate);
+        } else {
+          const formattedTime = messageDate.toISOString().substring(11, 16);
+          setLastMessageTime(formattedTime);
+        }
+      } else {
+        setLastMessage("");
       }
+    } catch (error) {
+      console.log(error);
     }
-    getId();
-  }, [conversation, userId, token])
+  }, [conversation, token, userId])
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('clearMessage', getId);
+      socket.on('newMessage', getId);
+
+      getId()
+      
+      return () => {
+        socket.off('clearMessage', getId);
+        socket.off('newMessage', getId);
+      };
+    }
+  }, [getId, socket, conversation]);
 
   return (
     <div

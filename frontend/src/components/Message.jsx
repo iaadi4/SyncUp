@@ -16,7 +16,6 @@ const Message = ({ message }) => {
           <div className="chat-image avatar">
             <div className="w-10 rounded-full">
               <img
-                alt="Tailwind CSS chat bubble component"
                 src={conversation.image ? conversation.image : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"}
               />
             </div>
@@ -29,12 +28,11 @@ const Message = ({ message }) => {
           <div className="chat-image avatar">
             <div className="w-10 rounded-full">
               <img
-                alt="Tailwind CSS chat bubble component"
                 src={user.userData.image ? user.userData.image : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"}
               />
             </div>
           </div>
-          <div className="chat-bubble">{message.message}</div>
+          <div className="chat-bubble relative">{message.message}</div>
           <time className="text-xs opacity-50">{formattedMessageTime}</time>
         </div>
       )}
