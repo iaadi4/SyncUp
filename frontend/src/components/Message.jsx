@@ -14,25 +14,15 @@ const Message = ({ message }) => {
       {isReceiver ? (
         <div className="chat chat-start">
           <div className="chat-image avatar">
-            <div className="w-10 rounded-full relative bottom-3">
-              <img
-                src={conversation.image ? conversation.image : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"}
-              />
-            </div>
           </div>
-          <div className="chat-bubble bg-chatstart">{message.message}</div>
+          <div className="chat-bubble bg-chatstart text-white max-w-96" style={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>{message.message}</div>
           <time className="text-xs opacity-50">{formattedMessageTime}</time>
         </div>
       ) : (
         <div className="chat chat-end">
           <div className="chat-image avatar">
-            <div className="w-10 rounded-full">
-              <img
-                src={user.userData.image ? user.userData.image : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"}
-              />
-            </div>
           </div>
-          <div className="chat-bubble bg-chatend">{message.message}</div>
+          <div className="chat-bubble bg-chatend max-w-96 text-white" style={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>{message.message}</div>
           <time className="text-xs opacity-50">{formattedMessageTime}</time>
         </div>
       )}

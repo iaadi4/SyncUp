@@ -36,8 +36,8 @@ const Conversation = ({ conversation }) => {
 
       if (otherUserMessages && otherUserMessages.length > 0) {
         let lastMessage = otherUserMessages[otherUserMessages.length - 1];
-        if(lastMessage.message.length > 40) {
-          lastMessage.message = lastMessage.message.substring(0,40)
+        if(lastMessage.message.length > 30) {
+          lastMessage.message = lastMessage.message.substring(0,30)
           lastMessage.message += '...'
         }
         setLastMessage(lastMessage.message);
@@ -75,7 +75,7 @@ const Conversation = ({ conversation }) => {
 
   return (
     <div
-      className={`flex w-full h-20 cursor-pointer ${selected ? "bg-customRed" : ""}`}
+      className={`flex w-full h-20 cursor-pointer ${selected ? "bg-customBlack2" : ""}`}
       onClick={() => dispatch(setSelected(conversation))}
     >
       <div className="flex items-center w-full mx-5">
@@ -91,7 +91,7 @@ const Conversation = ({ conversation }) => {
             <h1 className="font-semibold text-slate-300 ml-4 md:ml-3 lg:ml-2">{conversation.name}</h1>
           </div>
           <div>
-            <h1 className="ml-4 md:ml-3 lg:ml-2 ">{lastMessage}</h1>
+            <h1 className="ml-4 md:ml-3 lg:ml-2" style={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>{lastMessage}</h1>
           </div>
         </div>
         <div className="">

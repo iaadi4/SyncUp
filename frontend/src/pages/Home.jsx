@@ -160,12 +160,12 @@ const Home = () => {
   return (
     <div className="flex h-screen w-screen overflow-x-auto overflow-y-auto">
       {loading ? (
-        <div className="h-screen w-screen flex items-center justify-center bg-customDark2">
-          <div className="loading loading-ring text-customRed loading-lg"></div>
+        <div className="h-screen w-screen flex items-center justify-center bg-customBlack">
+          <div className="loading loading-dots loading-lg"></div>
         </div>
       ) : (
         <>
-          <div className="flex flex-col w-1/3 min-w-[400px] max-w-[500px] bg-purpleRed">
+          <div className="flex flex-col w-1/3 min-w-[400px] max-w-[500px] bg-customBlack">
             <div className="flex flex-col sticky top-0 z-10">
               <div className="flex h-[74px] w-full bg-customDark2">
                 <div className="flex items-center basis-[75%] lg:basis-[85%]">
@@ -178,7 +178,7 @@ const Home = () => {
                     className="flex p-2 w-12 btn btn-ghost rounded-full hover:bg-slate-900 cursor-pointer mt-1 mr-3"
                     onClick={() => document.getElementById('my_modal_5')?.showModal()}
                   >
-                    <RiLogoutBoxLine className="w-6 h-6 text-customRed" />
+                    <RiLogoutBoxLine className="w-6 h-6" />
                   </div>
                 </div>
                 <div className="flex items-center justify-end">
@@ -186,7 +186,7 @@ const Home = () => {
                     className="flex p-2 w-12 btn btn-ghost rounded-full hover:bg-slate-900 cursor-pointer mt-1 mr-2"
                     onClick={() => document.getElementById('my_modal_10')?.showModal()}
                   >
-                    <FaPlus className="w-6 h-6 text-customRed" />
+                    <FaPlus className="w-6 h-6" />
                   </div>
                 </div>
               </div>
@@ -215,13 +215,13 @@ const Home = () => {
               </div>
               <div className="flex justify-evenly h-10 items-center mb-6">
                 <h1
-                  className={`text-sm cursor-pointer font-semibold ${selected == 1 ? 'underline underline-offset-4 decoration-[1.5px] text-customRed': ''}`}
+                  className={`text-sm cursor-pointer font-semibold ${selected == 1 ? 'underline underline-offset-4 decoration-[1.5px]': ''}`}
                   onClick={(() => setSelected(1))}
                 >
                   FAVOURITES
                 </h1>
                 <h1
-                  className={`text-sm cursor-pointer font-semibold ${selected == 2 ? 'underline underline-offset-4 decoration-[1.5px] text-customRed': ''}`}
+                  className={`text-sm cursor-pointer font-semibold ${selected == 2 ? 'underline underline-offset-4 decoration-[1.5px]': ''}`}
                   onClick={(() => setSelected(2))}
                 >
                   CONTACTS
@@ -234,7 +234,9 @@ const Home = () => {
                   <Conversation key={conversation._id} conversation={conversation} />
                 ))
               ) : (
-                <h1>Empty</h1>
+                <div className="h-full flex justify-center">
+                  <h1 className="text-lg mt-40">Feels so empty!</h1>
+                </div>
               )}
             </div>
           </div>
@@ -250,7 +252,7 @@ const Home = () => {
           <p className="py-4">You will be logged out!</p>
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn mr-3 btn-ghost hover:bg-customDark2 hover:text-customRed">Close</button>
+              <button className="btn mr-3 btn-ghost hover:bg-customDark2 hover">Close</button>
               <button className="btn bg-customPurple hover:bg-customRed" onClick={logoutUser}>Logout</button>
             </form>
           </div>
@@ -268,7 +270,7 @@ const Home = () => {
           />
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn btn-ghost mr-3 hover:bg-customDark2 hover:text-customRed">Close</button>
+              <button className="btn btn-ghost mr-3 hover:bg-customDark2 hover">Close</button>
               <button className="btn hover:bg-customRed bg-customPurple" onClick={addFriend}>Add</button>
             </form>
           </div>
