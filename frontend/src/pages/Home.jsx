@@ -160,14 +160,14 @@ const Home = () => {
   return (
     <div className="flex h-screen w-screen overflow-x-auto overflow-y-auto">
       {loading ? (
-        <div className="h-screen w-screen flex items-center justify-center">
-          <div className="loading loading-ring loading-lg"></div>
+        <div className="h-screen w-screen flex items-center justify-center bg-customDark2">
+          <div className="loading loading-ring text-customRed loading-lg"></div>
         </div>
       ) : (
         <>
-          <div className="flex flex-col w-1/3 min-w-[400px] max-w-[500px]">
+          <div className="flex flex-col w-1/3 min-w-[400px] max-w-[500px] bg-purpleRed">
             <div className="flex flex-col sticky top-0 z-10">
-              <div className="flex h-16 w-full">
+              <div className="flex h-[74px] w-full bg-customDark2">
                 <div className="flex items-center basis-[75%] lg:basis-[85%]">
                   <h1 className="text-[1.75rem] font-semibold m-4 ml-10 text-white">
                     Chats
@@ -178,20 +178,20 @@ const Home = () => {
                     className="flex p-2 w-12 btn btn-ghost rounded-full hover:bg-slate-900 cursor-pointer mt-1 mr-3"
                     onClick={() => document.getElementById('my_modal_5')?.showModal()}
                   >
-                    <RiLogoutBoxLine className="w-6 h-6" />
+                    <RiLogoutBoxLine className="w-6 h-6 text-customRed" />
                   </div>
                 </div>
                 <div className="flex items-center justify-end">
                   <div
-                    className="flex p-2 w-12 btn btn-ghost rounded-full hover:bg-slate-900 cursor-pointer mt-1"
+                    className="flex p-2 w-12 btn btn-ghost rounded-full hover:bg-slate-900 cursor-pointer mt-1 mr-2"
                     onClick={() => document.getElementById('my_modal_10')?.showModal()}
                   >
-                    <FaPlus className="w-6 h-6" />
+                    <FaPlus className="w-6 h-6 text-customRed" />
                   </div>
                 </div>
               </div>
               <div className="flex m-4">
-                <label className="input input-bordered flex items-center gap-2 w-full h-10">
+                <div className="input input-bordered focus:outline-none flex items-center gap-2 w-full h-10 bg-customDark2 border-none focus-within:outline-none focus-within:border-none">
                   <input
                     type="text"
                     className="grow"
@@ -211,17 +211,17 @@ const Home = () => {
                       clipRule="evenodd"
                     />
                   </svg>
-                </label>
+                </div>
               </div>
               <div className="flex justify-evenly h-10 items-center mb-6">
                 <h1
-                  className={`text-sm cursor-pointer font-semibold ${selected == 1 ? 'underline underline-offset-4 decoration-[1.5px] text-white': ''}`}
+                  className={`text-sm cursor-pointer font-semibold ${selected == 1 ? 'underline underline-offset-4 decoration-[1.5px] text-customRed': ''}`}
                   onClick={(() => setSelected(1))}
                 >
                   FAVOURITES
                 </h1>
                 <h1
-                  className={`text-sm cursor-pointer font-semibold ${selected == 2 ? 'underline underline-offset-4 decoration-[1.5px] text-white': ''}`}
+                  className={`text-sm cursor-pointer font-semibold ${selected == 2 ? 'underline underline-offset-4 decoration-[1.5px] text-customRed': ''}`}
                   onClick={(() => setSelected(2))}
                 >
                   CONTACTS
@@ -245,31 +245,31 @@ const Home = () => {
       )}
       <ToastContainer />
       <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box">
+        <div className="modal-box bg-customDark2">
           <h3 className="font-bold text-lg">Are you sure?</h3>
           <p className="py-4">You will be logged out!</p>
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn mr-3 btn-ghost">Close</button>
-              <button className="btn" onClick={logoutUser}>Logout</button>
+              <button className="btn mr-3 btn-ghost hover:bg-customDark2 hover:text-customRed">Close</button>
+              <button className="btn bg-customPurple hover:bg-customRed" onClick={logoutUser}>Logout</button>
             </form>
           </div>
         </div>
       </dialog>
       <dialog id="my_modal_10" className="modal">
-        <div className="modal-box w-full">
+        <div className="modal-box w-full bg-customDark2">
           <h3 className="font-bold text-lg mb-4">Add Contact</h3>
           <input
             type="text"
             placeholder="Enter contact's email"
-            className="input input-bordered input-primary w-full"
+            className="input input-bordered w-full focus:outline-customRed focus:border-none bg-customDark border-customRed"
             value={friendEmail}
             onChange={(e) => setFriendEmail(e.target.value)}
           />
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn btn-ghost mr-3" >Close</button>
-              <button className="btn" onClick={addFriend}>Add</button>
+              <button className="btn btn-ghost mr-3 hover:bg-customDark2 hover:text-customRed">Close</button>
+              <button className="btn hover:bg-customRed bg-customPurple" onClick={addFriend}>Add</button>
             </form>
           </div>
         </div>

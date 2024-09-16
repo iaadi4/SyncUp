@@ -75,7 +75,7 @@ const Conversation = ({ conversation }) => {
 
   return (
     <div
-      className={`flex w-full h-20 cursor-pointer ${selected ? "bg-gray-900" : ""}`}
+      className={`flex w-full h-20 cursor-pointer ${selected ? "bg-customRed" : ""}`}
       onClick={() => dispatch(setSelected(conversation))}
     >
       <div className="flex items-center w-full mx-5">
@@ -91,7 +91,7 @@ const Conversation = ({ conversation }) => {
             <h1 className="font-semibold text-slate-300 ml-4 md:ml-3 lg:ml-2">{conversation.name}</h1>
           </div>
           <div>
-            <h1 className="ml-4 md:ml-3 lg:ml-2">{lastMessage}</h1>
+            <h1 className="ml-4 md:ml-3 lg:ml-2 ">{lastMessage}</h1>
           </div>
         </div>
         <div className="">

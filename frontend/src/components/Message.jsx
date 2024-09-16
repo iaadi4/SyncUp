@@ -14,13 +14,13 @@ const Message = ({ message }) => {
       {isReceiver ? (
         <div className="chat chat-start">
           <div className="chat-image avatar">
-            <div className="w-10 rounded-full">
+            <div className="w-10 rounded-full relative bottom-3">
               <img
                 src={conversation.image ? conversation.image : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"}
               />
             </div>
           </div>
-          <div className="chat-bubble">{message.message}</div>
+          <div className="chat-bubble bg-chatstart">{message.message}</div>
           <time className="text-xs opacity-50">{formattedMessageTime}</time>
         </div>
       ) : (
@@ -32,7 +32,7 @@ const Message = ({ message }) => {
               />
             </div>
           </div>
-          <div className="chat-bubble relative">{message.message}</div>
+          <div className="chat-bubble bg-chatend">{message.message}</div>
           <time className="text-xs opacity-50">{formattedMessageTime}</time>
         </div>
       )}

@@ -195,7 +195,7 @@ const Messages = () => {
     <div className="w-full h-full min-w-[650px] overflow-x-auto">
       {conversation ? (
         <div className="h-full w-full">
-          <div className="flex sticky min-h-14 h-[10%] top-0">
+          <div className="flex sticky min-h-14 h-[10%] top-0 bg-customDark">
             <div className="flex min-h-14 items-center w-full">
               <div className="flex ml-4">
                 <div className="avatar">
@@ -215,7 +215,7 @@ const Messages = () => {
                   className="flex w-12 btn btn-ghost rounded-full p-2 cursor-pointer mr-3"
                   onClick={toggleFavourite}
                 >
-                  <GoStar className="w-6 h-6" />
+                  <GoStar className="w-6 h-6 text-customPurple" />
                 </div>
                 <div
                   className="flex w-12 btn btn-ghost rounded-full p-2 cursor-pointer mr-3"
@@ -223,7 +223,7 @@ const Messages = () => {
                     document.getElementById("my_modal_1").showModal()
                   }
                 >
-                  <GrClearOption className="w-6 h-6" />
+                  <GrClearOption className="w-6 h-6 text-customPurple" />
                 </div>
                 <div className="flex mr-4">
                   <div
@@ -232,16 +232,16 @@ const Messages = () => {
                       document.getElementById("my_modal_11").showModal()
                     }
                   >
-                    <IoPersonRemoveSharp className="w-6 h-6" />
+                    <IoPersonRemoveSharp className="w-6 h-6 text-customPurple" />
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div className=" grow h-[78%] overflow-y-auto">
+          <div className=" grow h-[78%] overflow-y-auto bg-customPurple2">
             {loading ? (
-              <div className="flex h-full w-full  items-center justify-center">
-                <div className="loading loading-ring loading-lg"></div>
+              <div className="flex h-full w-full bg-customPurple2 items-center justify-center">
+                <div className="loading loading-ring text-customRed loading-lg"></div>
               </div>
             ) : null}
             {messages
@@ -253,43 +253,45 @@ const Messages = () => {
               : null}
           </div>
           <form
-            className="flex items-center min-h-16 h-[12%] bg-zinc-900"
+            className="flex items-center min-h-16 h-[12%] bg-customDark3"
             onSubmit={handleMessage}
           >
             <input
               type="text"
               placeholder="Type a message"
-              className="input mx-6 w-full h-[60%] focus:outline-none border-none"
+              className="input mx-6 w-full h-[60%] focus:outline-none border-none bg-customPurple3"
               value={message || ""}
               onChange={(e) => setMessage(e.target.value)}
             />
           </form>
         </div>
-      ) : null}
+      ) : (
+        <div className="h-full w-full bg-customDark3"></div>
+      )}
       <dialog id="my_modal_1" className="modal">
-        <div className="modal-box">
+        <div className="modal-box bg-customDark2">
           <h3 className="font-bold text-lg">Are you sure?</h3>
           <p className="py-4">
             This will clear all messages from this chat.
           </p>
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn mr-3 btn-ghost">Cancel</button>
-              <button className="btn" onClick={deleteConversation}>Clear chat</button>
+              <button className="btn mr-3 btn-ghost hover:bg-customDark2 hover:text-customRed">Cancel</button>
+              <button className="btn hover:bg-customRed bg-customPurple" onClick={deleteConversation}>Clear chat</button>
             </form>
           </div>
         </div>
       </dialog>
       <dialog id="my_modal_11" className="modal">
-        <div className="modal-box">
+        <div className="modal-box bg-customDark2">
           <h3 className="font-bold text-lg">Are you sure?</h3>
           <p className="py-4">
             User will be removed from your contacts.
           </p>
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn mr-3 btn-ghost">Cancel</button>
-              <button className="btn" onClick={removeFriend}>Remove</button>
+              <button className="btn mr-3 btn-ghost hover:bg-customDark2 hover:text-customRed">Cancel</button>
+              <button className="btn hover:bg-customRed bg-customPurple" onClick={removeFriend}>Remove</button>
             </form>
           </div>
         </div>
