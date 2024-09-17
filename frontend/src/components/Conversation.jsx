@@ -36,8 +36,8 @@ const Conversation = ({ conversation }) => {
 
       if (otherUserMessages && otherUserMessages.length > 0) {
         let lastMessage = otherUserMessages[otherUserMessages.length - 1];
-        if(lastMessage.message.length > 30) {
-          lastMessage.message = lastMessage.message.substring(0,30)
+        if (lastMessage.message.length > 30) {
+          lastMessage.message = lastMessage.message.substring(0, 30)
           lastMessage.message += '...'
         }
         setLastMessage(lastMessage.message);
@@ -45,7 +45,7 @@ const Conversation = ({ conversation }) => {
         const messageDate = new Date(lastMessage.createdAt);
         const isOlderThanToday = messageDate.toDateString() !== now.toDateString();
         if (isOlderThanToday) {
-          const formattedDate = messageDate.toLocaleDateString();
+          const formattedDate = messageDate.toLocaleDateString('en-GB');
           setLastMessageTime(formattedDate);
         } else {
           const formattedTime = messageDate.toISOString().substring(11, 16);
@@ -62,52 +62,57 @@ const Conversation = ({ conversation }) => {
   useEffect(() => {
     if (socket) {
       socket.on('clearMessage', getId);
-      socket.on('newMessage', getId);
-
       getId()
-      
-      return () => {
-        socket.off('clearMessage', getId);
-        socket.off('newMessage', getId);
-      };
+    }
+    return () => {
+      socket?.off('clearMessage', getId);
     }
   }, [getId, socket, conversation]);
 
   useEffect(() => {
-    if(selected) {
-      socket?.emit('seen', { conversationId : conversation._id, userId : user.userData._id} );
+    if(socket) {
+      socket.on('newMessage', getId);
     }
-  }, [socket, selected, conversation, user])
+    return () => {
+      socket?.off('newMessage', getId);
+    }
+  }, [socket, getId])
 
-  return (
-    <div
-      className={`flex w-full h-20 cursor-pointer ${selected ? "bg-zinc-900" : ""}`}
-      onClick={() => dispatch(setSelected(conversation))}
-    >
-      <div className="flex items-center w-full mx-5">
-        <div className="flex basis-2/12">
-          <div className={`avatar ${isOnline ? "online" : ""}`}>
-            <div className="w-14 rounded-full">
-              <img src={conversation.image ? conversation.image : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"} />
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col basis-8/12">
-          <div>
-            <h1 className="font-semibold text-slate-300 ml-4 md:ml-3 lg:ml-2">{conversation.name}</h1>
-          </div>
-          <div>
-            <h1 className="ml-4 md:ml-3 lg:ml-2" style={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>{lastMessage}</h1>
-          </div>
-        </div>
-        <div className="">
-          <div className="px-2 py-1 rounded-3xl">
-            <h1>{lastMessageTime}</h1>
+  useEffect(() => {
+    if(selected) {
+      socket?.emit('seen', {userId: userId, conversationId: conversation._id});
+    }
+  }, [conversation, socket, selected, userId])
+
+return (
+  <div
+    className={`flex w-full h-20 cursor-pointer ${selected ? "bg-zinc-900" : ""}`}
+    onClick={() => dispatch(setSelected(conversation))}
+  >
+    <div className="flex items-center w-full mx-5">
+      <div className="flex basis-2/12">
+        <div className={`avatar ${isOnline ? "online" : ""}`}>
+          <div className="w-14 rounded-full">
+            <img src={conversation.image ? conversation.image : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"} />
           </div>
         </div>
       </div>
+      <div className="flex flex-col basis-8/12">
+        <div>
+          <h1 className="font-semibold text-slate-300 ml-4 md:ml-3 lg:ml-2">{conversation.name}</h1>
+        </div>
+        <div>
+          <h1 className="ml-4 md:ml-3 lg:ml-2" style={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>{lastMessage}</h1>
+        </div>
+      </div>
+      <div className="">
+        <div className="px-2 py-1 rounded-3xl">
+          <h1>{lastMessageTime}</h1>
+        </div>
+      </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default Conversation;

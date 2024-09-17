@@ -1,13 +1,34 @@
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 const Message = ({ message }) => {
-  const conversation = useSelector((state) => state.conversation.selected);
   const user = useSelector((state) => state.auth.userData);
+  const socket = useSelector((state) => state.socket.instance);
+
+  const [status, setStatus] = useState(message.status);
 
   const isReceiver = message.senderId !== user.userData._id;
 
   const messageTime = new Date(message.createdAt);
   const formattedMessageTime = messageTime.toISOString().substring(11, 16);
+
+  const setSeen = () => {
+    setStatus('seen');
+    console.log('updated');
+  }
+
+  useEffect(() => {
+    if(socket)
+      socket.on('newMessage', setSeen)
+  }, [socket])
+
+  useEffect(() => {
+    socket?.on('updated', setSeen);
+
+    return () => {
+      socket?.off('updated', setSeen);
+    }
+  }, [socket, message])
 
   return (
     <div className="mx-6">
@@ -20,7 +41,7 @@ const Message = ({ message }) => {
         <div className="chat chat-end">
           <div className="chat-bubble bg-chatend max-w-96" style={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>{message.message}</div>
           <time className="text-xs opacity-50">{formattedMessageTime}</time>
-          <div className="chat-footer opacity-50">{message.status}</div>
+          <div className="chat-footer opacity-50">{status}</div>
         </div>
       )}
     </div>

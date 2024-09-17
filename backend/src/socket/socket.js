@@ -44,6 +44,12 @@ io.on('connection', (socket) => {
         if(receiverSocketId)
             io.to(receiverSocketId).emit('messageSeen', {userId: userId, conversationId: conversationId})
     })
+
+    socket.on('updateSeen', ({conversationId}) => {
+        const receiverSocketId = getReceiverSocketId(conversationId);
+        if(receiverSocketId)
+            io.to(receiverSocketId).emit('updated', {conversationId});
+    })
 })
 
 export { io, server, app };

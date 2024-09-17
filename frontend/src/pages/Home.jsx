@@ -161,8 +161,8 @@ const Home = () => {
     }
   }, [dispatch, user])
 
-  useEffect(() => {
-    socket?.on('messageSeen', async ({userId, conversationId}) => {
+  const handleMessageSeen = useCallback(async ({userId, conversationId}) => {
+    try {
       const response = await axios.get(`http://localhost:3000/api/v1/conversation/messages/${userId}/${conversationId}`, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -170,17 +170,30 @@ const Home = () => {
       });
       const messages = response.data?.data.messages;
       const id = response.data?.data?._id;
-      console.log(id)
       if(messages) {
-        const response = await axios.patch(`http://localhost:3000/api/v1/conversation/updateSeen/${id}`, {} , {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        })
-        console.log(response);
+        try {
+          await axios.patch(`http://localhost:3000/api/v1/conversation/updateSeen/${id}`, {} , {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
+          socket?.emit('updateSeen', {conversationId});
+        } catch (error) {
+          console.log(error);
+        }
       }
-    })
+    } catch (error) {
+      console.log(error);
+    }
   }, [socket, token])
+
+  useEffect(() => {
+    socket?.on('messageSeen', handleMessageSeen)
+
+    return () => {
+      socket?.off('messageSeen', handleMessageSeen);
+    }
+  }, [socket, handleMessageSeen])
 
   return (
     <div className="flex h-screen w-screen overflow-x-auto overflow-y-auto">

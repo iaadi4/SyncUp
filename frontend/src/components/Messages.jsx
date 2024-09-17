@@ -37,11 +37,12 @@ const Messages = () => {
     socket?.on("newMessage", (newMessage) => {
       if (newMessage.senderId === conversation?._id) {
         setMessages((prevMessages) => [...prevMessages, newMessage]);
+        socket?.emit('seen', {userId: userId, conversationId: conversation._id});
       }
     });
 
     return () => socket?.off("newMessage");
-  }, [socket, setMessages, messages, conversation]);
+  }, [socket, setMessages, messages, conversation, userId]);
 
   const handleMessage = useCallback(async (e) => {
     e.preventDefault();
