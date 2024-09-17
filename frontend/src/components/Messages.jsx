@@ -3,8 +3,7 @@ import { GrClearOption } from "react-icons/gr";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { setSelected } from "../Redux/conversationSlice";
 import { ToastContainer, toast } from "react-toastify";
-import { IoPersonRemoveSharp } from "react-icons/io5";
-import { GoStar } from "react-icons/go";
+import { IoMdMore } from "react-icons/io";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import Message from "./Message";
@@ -126,7 +125,7 @@ const Messages = () => {
   }, [conversation, token, dispatch]);
 
   const toggleFavourite = useCallback(async () => {
-    if(conversation) {
+    if (conversation) {
       try {
         const response = await axios.post(`http://localhost:3000/api/v1/favourite/${conversation._id}`, {}, {
           headers: {
@@ -213,27 +212,18 @@ const Messages = () => {
               <div className="flex ml-auto mr-3">
                 <div
                   className="flex w-12 btn btn-ghost rounded-full p-2 cursor-pointer mr-3"
-                  onClick={toggleFavourite}
-                >
-                  <GoStar className="w-6 h-6 t" />
-                </div>
-                <div
-                  className="flex w-12 btn btn-ghost rounded-full p-2 cursor-pointer mr-3"
                   onClick={() =>
                     document.getElementById("my_modal_1").showModal()
                   }
                 >
                   <GrClearOption className="w-6 h-6 t" />
                 </div>
-                <div className="flex mr-4">
-                  <div
-                    className="flex w-12 btn btn-ghost rounded-full p-2 cursor-pointer"
-                    onClick={() =>
-                      document.getElementById("my_modal_11").showModal()
-                    }
-                  >
-                    <IoPersonRemoveSharp className="w-6 h-6 t" />
-                  </div>
+                <div tabIndex={0} className="dropdown dropdown-bottom dropdown-end flex w-12 btn btn-ghost rounded-full p-2 cursor-pointer mr-3">
+                  <IoMdMore className="w-6 h-6" />
+                  <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box w-52 p-2">
+                    <li><div onClick={toggleFavourite}>Toggle Favourite</div></li>
+                    <li><div onClick={() => document.getElementById("my_modal_11").showModal()}>Remove Contact</div></li>
+                  </ul>
                 </div>
               </div>
             </div>

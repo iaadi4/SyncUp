@@ -38,6 +38,12 @@ io.on('connection', (socket) => {
         if(receiverSocketId) 
             io.to(receiverSocketId).emit('clearMessage', {conversationId});
     })
+
+    socket.on('seen', ({conversationId, userId}) => {
+        const receiverSocketId = getReceiverSocketId(conversationId);
+        if(receiverSocketId)
+            io.to(receiverSocketId).emit('messageSeen', {userId: userId, conversationId: conversationId})
+    })
 })
 
 export { io, server, app };

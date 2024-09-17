@@ -73,9 +73,15 @@ const Conversation = ({ conversation }) => {
     }
   }, [getId, socket, conversation]);
 
+  useEffect(() => {
+    if(selected) {
+      socket?.emit('seen', { conversationId : conversation._id, userId : user.userData._id} );
+    }
+  }, [socket, selected, conversation, user])
+
   return (
     <div
-      className={`flex w-full h-20 cursor-pointer ${selected ? "bg-customBlack2" : ""}`}
+      className={`flex w-full h-20 cursor-pointer ${selected ? "bg-zinc-900" : ""}`}
       onClick={() => dispatch(setSelected(conversation))}
     >
       <div className="flex items-center w-full mx-5">

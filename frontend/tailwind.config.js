@@ -10,10 +10,6 @@ export default {
     extend: {
       colors: {
         'customBlack': '#222831',
-        'customGray': '#393E46',
-        'customSky': '#00ADB5',
-        'customWhite': '#EEEEEE',
-        'customBlack2': '#1D232A'
       }
     },
   },

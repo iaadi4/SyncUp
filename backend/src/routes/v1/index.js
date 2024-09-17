@@ -6,7 +6,7 @@ const router = express.Router();
 const { signup, login, getAll, favourite, getFavourite } = controllers.UserController;
 const { addFriend, getFriends, removeFriend } = controllers.FriendController;
 const { sendMessage, getMessages } = controllers.MessageController;
-const { deleteConversation, getConversation, getWithMessages } = controllers.ConversationController;
+const { deleteConversation, getConversation, getWithMessages, updateSeen } = controllers.ConversationController;
 
 router.post (
     '/signup',
@@ -82,6 +82,12 @@ router.get(
     '/favourite/get',
     auth,
     getFavourite
+)
+
+router.patch(
+    '/conversation/updateSeen/:id',
+    auth,
+    updateSeen
 )
 
 export default router;

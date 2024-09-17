@@ -26,6 +26,10 @@ const Home = () => {
 
   const reload = useSelector((state) => state.refresh.reload);
   const user = useSelector((state) => state.auth.userData);
+  const socket = useSelector((state) => state.socket.instance);
+
+  const data = JSON.parse(localStorage.getItem("user"));
+  const token = data?.userData?.token;
 
   const logoutUser = () => {
     dispatch(logout())
@@ -34,7 +38,7 @@ const Home = () => {
 
   const searchUser = useMemo(() => {
     if (search.trim() != "" && conversations) {
-      return conversations.filter((convo) => 
+      return conversations.filter((convo) =>
         convo.name.toLowerCase().startsWith(search.toLowerCase())
       )
     }
@@ -42,13 +46,13 @@ const Home = () => {
   }, [conversations, search])
 
   const displayedConversations = useMemo(() => {
-    if(search.length == 0) {
-      if(selected == 1)
+    if (search.length == 0) {
+      if (selected == 1)
         return favourite.length > 0 ? favourite : null;
       else
         return conversations.length > 0 ? conversations : null;
     }
-    else 
+    else
       return searchUser;
   }, [favourite, search, selected, conversations, searchUser])
 
@@ -157,6 +161,27 @@ const Home = () => {
     }
   }, [dispatch, user])
 
+  useEffect(() => {
+    socket?.on('messageSeen', async ({userId, conversationId}) => {
+      const response = await axios.get(`http://localhost:3000/api/v1/conversation/messages/${userId}/${conversationId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const messages = response.data?.data.messages;
+      const id = response.data?.data?._id;
+      console.log(id)
+      if(messages) {
+        const response = await axios.patch(`http://localhost:3000/api/v1/conversation/updateSeen/${id}`, {} , {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        console.log(response);
+      }
+    })
+  }, [socket, token])
+
   return (
     <div className="flex h-screen w-screen overflow-x-auto overflow-y-auto">
       {loading ? (
@@ -215,13 +240,13 @@ const Home = () => {
               </div>
               <div className="flex justify-evenly h-10 items-center mb-6">
                 <h1
-                  className={`text-sm cursor-pointer font-semibold ${selected == 1 ? 'underline underline-offset-4 decoration-[1.5px]': ''}`}
+                  className={`text-sm cursor-pointer font-semibold ${selected == 1 ? 'underline underline-offset-4 decoration-[1.5px] text-white' : ''}`}
                   onClick={(() => setSelected(1))}
                 >
                   FAVOURITES
                 </h1>
                 <h1
-                  className={`text-sm cursor-pointer font-semibold ${selected == 2 ? 'underline underline-offset-4 decoration-[1.5px]': ''}`}
+                  className={`text-sm cursor-pointer font-semibold ${selected == 2 ? 'underline underline-offset-4 decoration-[1.5px] text-white' : ''}`}
                   onClick={(() => setSelected(2))}
                 >
                   CONTACTS
@@ -229,7 +254,7 @@ const Home = () => {
               </div>
             </div>
             <div className="flex-1 overflow-y-auto">
-            {displayedConversations ? (
+              {displayedConversations ? (
                 displayedConversations.map((conversation) => (
                   <Conversation key={conversation._id} conversation={conversation} />
                 ))

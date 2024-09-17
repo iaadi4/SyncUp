@@ -13,17 +13,14 @@ const Message = ({ message }) => {
     <div className="mx-6">
       {isReceiver ? (
         <div className="chat chat-start">
-          <div className="chat-image avatar">
-          </div>
-          <div className="chat-bubble bg-chatstart text-white max-w-96" style={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>{message.message}</div>
-          <time className="text-xs opacity-50">{formattedMessageTime}</time>
+          <div className="chat-bubble bg-chatstart max-w-96" style={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>{message.message}</div>
+          <time className="text-xs opacity-50 relative bottom-4">{formattedMessageTime}</time>
         </div>
-      ) : (
+      ) : ( 
         <div className="chat chat-end">
-          <div className="chat-image avatar">
-          </div>
-          <div className="chat-bubble bg-chatend max-w-96 text-white" style={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>{message.message}</div>
+          <div className="chat-bubble bg-chatend max-w-96" style={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>{message.message}</div>
           <time className="text-xs opacity-50">{formattedMessageTime}</time>
+          <div className="chat-footer opacity-50">{message.status}</div>
         </div>
       )}
     </div>
