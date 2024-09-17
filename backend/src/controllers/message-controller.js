@@ -4,7 +4,7 @@ const messageService = new MessageService();
 
 const sendMessage = async(req, res) => {
     try {
-        const newMessage = await messageService.sendMessage(req.user.id, req.params.id, req.body.message);
+        const newMessage = await messageService.sendMessage(req.user.id, req.params.id, req.body.message, req.body.status);
         return res.status(201).json({
             data: newMessage,
             success: true,

@@ -7,7 +7,7 @@ const conversationRepository = new repositories.ConversationRepository();
 
 class MessageService {
 
-    async sendMessage(senderId, receiverId, message) {
+    async sendMessage(senderId, receiverId, message, status) {
         try {
             let conversation = await conversationRepository.get(senderId, receiverId);
 
@@ -18,7 +18,8 @@ class MessageService {
             const newMessage = await Message.create({
                 senderId,
                 receiverId,
-                message
+                message,
+                status
             });
 
             if(newMessage) {
