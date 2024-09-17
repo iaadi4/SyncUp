@@ -57,26 +57,21 @@ const Conversation = ({ conversation }) => {
     } catch (error) {
       console.log(error);
     }
-  }, [conversation, token, userId])
+  }, [conversation._id, token, userId])
 
   useEffect(() => {
-    if (socket) {
-      socket.on('clearMessage', getId);
-      getId()
-    }
+    getId();
+  }, [getId])
+
+  useEffect(() => {
+    socket?.on('clearMessage', getId);
+    socket?.on('newMessage', getId);
+
     return () => {
       socket?.off('clearMessage', getId);
-    }
-  }, [getId, socket, conversation]);
-
-  useEffect(() => {
-    if(socket) {
-      socket.on('newMessage', getId);
-    }
-    return () => {
       socket?.off('newMessage', getId);
     }
-  }, [socket, getId])
+  }, [getId, socket])
 
   useEffect(() => {
     if(selected) {

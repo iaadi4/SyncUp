@@ -14,21 +14,17 @@ const Message = ({ message }) => {
 
   const setSeen = () => {
     setStatus('seen');
-    console.log('updated');
   }
 
   useEffect(() => {
-    if(socket)
-      socket.on('newMessage', setSeen)
+    socket?.on('newMessage', setSeen);
+    return () => socket?.off('newMessage', setSeen);
   }, [socket])
 
   useEffect(() => {
     socket?.on('updated', setSeen);
-
-    return () => {
-      socket?.off('updated', setSeen);
-    }
-  }, [socket, message])
+    return () => socket?.off('updated', setSeen);
+  }, [socket])
 
   return (
     <div className="mx-6">

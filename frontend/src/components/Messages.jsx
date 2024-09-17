@@ -33,16 +33,18 @@ const Messages = () => {
     setSelected(null);
   }, [reload]);
 
-  useEffect(() => {
-    socket?.on("newMessage", (newMessage) => {
-      if (newMessage.senderId === conversation?._id) {
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
-        socket?.emit('seen', {userId: userId, conversationId: conversation._id});
-      }
-    });
+  const handleNewMessage = useCallback((newMessage) => {
+    if (newMessage.senderId === conversation?._id) {
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      socket?.emit('seen', {userId: userId, conversationId: conversation?._id});
+    }
+  }, [conversation?._id, socket, userId])
 
-    return () => socket?.off("newMessage");
-  }, [socket, setMessages, messages, conversation, userId]);
+  useEffect(() => {
+    socket?.on("newMessage", handleNewMessage);
+
+    return () => socket?.off("newMessage", handleNewMessage);
+  }, [socket, handleNewMessage]);
 
   const handleMessage = useCallback(async (e) => {
     e.preventDefault();
@@ -128,12 +130,11 @@ const Messages = () => {
   const toggleFavourite = useCallback(async () => {
     if (conversation) {
       try {
-        const response = await axios.post(`http://localhost:3000/api/v1/favourite/${conversation._id}`, {}, {
+        await axios.post(`http://localhost:3000/api/v1/favourite/${conversation._id}`, {}, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
-        console.log(response.data.data)
         dispatch(setReload(true));
       } catch (error) {
         toast.error("Failed! Please try again later", {
