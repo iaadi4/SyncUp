@@ -2,12 +2,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { GrClearOption } from "react-icons/gr";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { setSelected } from "../Redux/conversationSlice";
-import { ToastContainer, toast } from "react-toastify";
 import { IoMdMore } from "react-icons/io";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from 'react-toastify';
+import { setReload } from "../Redux/reloadSlice";
 import axios from "axios";
 import Message from "./Message";
-import { setReload } from "../Redux/reloadSlice";
 
 const Messages = () => {
   const conversation = useSelector((state) => state.conversation.selected);
@@ -288,7 +287,6 @@ const Messages = () => {
           </div>
         </div>
       </dialog>
-      <ToastContainer />
     </div>
   );
 };
