@@ -15,23 +15,61 @@ const Signup = () => {
 
   const convertToBase64 = (e) => {
     let reader = new FileReader();
-    if(e.target.files[0]) {
-      if(e.target.files[0].size > 5 * 1000 * 1024) {
-        toast.error(`File can't be bigger than 5mb`, {theme: "dark", autoClose: 2000, hideProgressBar: true});
+  
+    if (e.target.files[0]) {
+      if (e.target.files[0].size > 5 * 1000 * 1024) {
+        toast.error(`File can't be bigger than 5MB`, {
+          theme: "dark",
+          autoClose: 2000,
+          hideProgressBar: true,
+        });
         setImage("");
         e.target.value = "";
       } else {
         reader.readAsDataURL(e.target.files[0]);
         reader.onload = () => {
-          setImage(reader.result);
-        }
-        reader.onerror = error => {
-          toast.error('Failed to upload file', {theme: "dark", autoClose: 2000, hideProgressBar: true});
+          const img = new Image();
+          img.src = reader.result;
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            const MAX_WIDTH = 1024;
+            const MAX_HEIGHT = 1024;
+            let width = img.width;
+            let height = img.height;
+            if (width > height) {
+              if (width > MAX_WIDTH) {
+                height *= MAX_WIDTH / width;
+                width = MAX_WIDTH;
+              }
+            } else {
+              if (height > MAX_HEIGHT) {
+                width *= MAX_HEIGHT / height;
+                height = MAX_HEIGHT;
+              }
+            }
+  
+            canvas.width = width;
+            canvas.height = height;
+            ctx.drawImage(img, 0, 0, width, height);
+            const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.7);
+  
+            setImage(compressedDataUrl);
+          };
+        };
+  
+        reader.onerror = (error) => {
+          toast.error('Failed to upload file', {
+            theme: "dark",
+            autoClose: 2000,
+            hideProgressBar: true,
+          });
           console.log(error);
-        }
-      } 
+        };
+      }
     }
-  }
+  };
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();

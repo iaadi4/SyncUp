@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setSocket, setOnlineUsers } from "../Redux/socketSlice";
 import { logout } from "../Redux/authSlice";
+import { setRemove } from "../Redux/conversationSlice";
 import { setReload } from "../Redux/reloadSlice";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { FaPlus } from "react-icons/fa6";
@@ -32,6 +33,7 @@ const Home = () => {
   const token = data?.userData?.token;
 
   const logoutUser = () => {
+    dispatch(setRemove())
     dispatch(logout())
     navigate('/login')
   }
