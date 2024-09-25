@@ -195,7 +195,7 @@ const Messages = () => {
     <div className="w-full h-full min-w-[650px] overflow-x-auto">
       {conversation ? (
         <div className="h-full w-full">
-          <div className="flex sticky min-h-14 h-[10%] top-0 bg-customDark">
+          <div className="flex sticky min-h-14 h-[10%] top-0 bg-customDark z-20">
             <div className="flex min-h-14 items-center w-full">
               <div className="flex ml-4">
                 <div className="avatar">
