@@ -27,7 +27,7 @@ const Message = ({ message }) => {
   }, [socket])
 
   return (
-    <div className="mx-6">
+    <div className="mx-6 z-[-1]">
       {isReceiver ? (
         <div className="chat chat-start">
           <div className="chat-bubble bg-chatstart max-w-96" style={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>{message.message}</div>
