@@ -4,6 +4,8 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Error from './pages/Error';
 import { useSelector } from 'react-redux';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const user = useSelector((state) => state.auth.userData);
@@ -16,6 +18,7 @@ function App() {
           <Route path='/login' element={user ? <Navigate to={'/'} />:<Login />} />
           <Route path='/signup' element={user ? <Navigate to={'/'} /> : <Signup />} />
       </Routes>
+      <ToastContainer />
     </div>
   )
 }

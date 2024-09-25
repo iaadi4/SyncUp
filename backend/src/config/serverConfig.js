@@ -4,5 +4,6 @@ dotenv.config();
 
 export default {
     PORT: process.env.PORT,
-    SECRETORKEY: process.env.SECRETORKEY
+    SECRETORKEY: process.env.SECRETORKEY,
+    DATABASE: process.env.DATABASE
 };
