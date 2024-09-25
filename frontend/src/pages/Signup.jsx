@@ -93,9 +93,7 @@ const Signup = () => {
         setImage("");
         const fileInput = document.getElementById('fileInput');
         fileInput.value = "";
-        setTimeout(() => {
-          navigate('/login');
-        }, 2000)
+        navigate('/login');
       })
       .catch(function(error) {
         console.error('Error:', error);

@@ -1,27 +1,27 @@
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { GrClearOption } from "react-icons/gr";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { setSelected } from "../Redux/conversationSlice";
+import { setSelected } from "../Redux/contactSlice";
 import { IoMdMore } from "react-icons/io";
+import { IoIosSend } from "react-icons/io";
 import { toast } from 'react-toastify';
-import { setReload } from "../Redux/reloadSlice";
 import axios from "axios";
 import Message from "./Message";
 
 const Messages = () => {
-  const conversation = useSelector((state) => state.conversation.selected);
+  const contact = useSelector((state) => state.contact.selected);
   const [message, setMessage] = useState(null);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [sending, setSending] = useState(false);
 
-  const dispatch = useDispatch();
   const lastMessageRef = useRef();
 
   const data = JSON.parse(localStorage.getItem("user"));
   const token = data?.userData?.token;
 
   const onlineUsers = useSelector((state) => state.socket.onlineUsers);
-  const isOnline = onlineUsers.includes(conversation?._id);
+  const isOnline = onlineUsers.includes(contact?._id);
 
   const socket = useSelector((state) => state.socket.instance);
   const user = useSelector((state) => state.auth.userData);
@@ -33,11 +33,11 @@ const Messages = () => {
   }, [reload]);
 
   const handleNewMessage = useCallback((newMessage) => {
-    if (newMessage.senderId === conversation?._id) {
+    if (newMessage.senderId === contact?._id) {
       setMessages((prevMessages) => [...prevMessages, newMessage]);
-      socket?.emit('seen', {userId: userId, conversationId: conversation?._id});
+      socket?.emit('seen', { userId: userId, conversationId: contact?._id });
     }
-  }, [conversation?._id, socket, userId])
+  }, [contact?._id, socket, userId])
 
   useEffect(() => {
     socket?.on("newMessage", handleNewMessage);
@@ -49,8 +49,9 @@ const Messages = () => {
     e.preventDefault();
     if (message) {
       try {
+        setSending(true);
         const res = await axios.post(
-          `http://localhost:3000/api/v1/message/send/${conversation._id}`,
+          `http://localhost:3000/api/v1/message/send/${contact._id}`,
           { message: message, status: 'sent' },
           {
             headers: {
@@ -68,14 +69,16 @@ const Messages = () => {
           hideProgressBar: true,
         });
         console.log(error);
+      } finally {
+        setSending(false);
       }
     }
-  }, [conversation, message, token]);
+  }, [contact, message, token]);
 
   const deleteConversation = useCallback(async () => {
-    if (conversation) {
+    if (contact) {
       try {
-        const response = await axios.get(`http://localhost:3000/api/v1/conversation/${userId}/${conversation._id}`, {
+        const response = await axios.get(`http://localhost:3000/api/v1/conversation/${userId}/${contact._id}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -88,7 +91,7 @@ const Messages = () => {
             }
           })
           setMessages([]);
-          socket.emit('clearMessage', { conversationId: conversation._id });
+          socket.emit('clearMessage', { conversationId: contact._id });
         }
       } catch (error) {
         toast.error("Failed to delete messages, Please try again.", {
@@ -99,17 +102,16 @@ const Messages = () => {
         console.log(error);
       }
     }
-  }, [conversation, socket, token, userId]);
+  }, [contact, socket, token, userId]);
 
   const removeFriend = useCallback(async () => {
-    if (conversation) {
+    if (contact) {
       try {
-        await axios.patch(`http://localhost:3000/api/v1/removeFriend/${conversation._id}`, {}, {
+        await axios.patch(`http://localhost:3000/api/v1/removeFriend/${contact._id}`, {}, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
-        dispatch(setReload(true));
         toast.success("User removed from your contacts", {
           theme: "dark",
           autoClose: 2000,
@@ -124,17 +126,16 @@ const Messages = () => {
         console.log(error);
       }
     }
-  }, [conversation, token, dispatch]);
+  }, [contact, token]);
 
   const toggleFavourite = useCallback(async () => {
-    if (conversation) {
+    if (contact) {
       try {
-        await axios.post(`http://localhost:3000/api/v1/favourite/${conversation._id}`, {}, {
+        await axios.post(`http://localhost:3000/api/v1/favourite/${contact._id}`, {}, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
-        dispatch(setReload(true));
       } catch (error) {
         toast.error("Failed! Please try again later", {
           theme: "dark",
@@ -144,10 +145,10 @@ const Messages = () => {
         console.log(error);
       }
     }
-  }, [conversation, token, dispatch]);
+  }, [contact, token]);
 
   useEffect(() => {
-    if (conversation) {
+    if (contact) {
       socket?.on('clearMessage', ({ conversationId }) => {
         if (userId == conversationId) {
           setMessages([]);
@@ -156,15 +157,15 @@ const Messages = () => {
 
       return () => socket?.off('clearMessage');
     }
-  }, [conversation, socket, userId]);
+  }, [contact, socket, userId]);
 
   useEffect(() => {
     const getMessages = async () => {
       setLoading(true);
-      if (conversation) {
+      if (contact) {
         try {
           const response = await axios.get(
-            `http://localhost:3000/api/v1/messages/${conversation._id}`,
+            `http://localhost:3000/api/v1/messages/${contact._id}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -185,7 +186,7 @@ const Messages = () => {
       }
     };
     getMessages();
-  }, [conversation, token]);
+  }, [contact, token]);
 
   useEffect(() => {
     lastMessageRef?.current?.scrollIntoView({ behavior: "smooth" });
@@ -193,19 +194,19 @@ const Messages = () => {
 
   return (
     <div className="w-full h-full min-w-[650px] overflow-x-auto">
-      {conversation ? (
+      {contact ? (
         <div className="h-full w-full">
           <div className="flex sticky min-h-14 h-[10%] top-0 bg-customDark z-20">
             <div className="flex min-h-14 items-center w-full">
               <div className="flex ml-4">
                 <div className="avatar">
                   <div className="w-12 rounded-full">
-                    <img src={conversation.image ? conversation.image : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"} />
+                    <img src={contact.image ? contact.image : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"} />
                   </div>
                 </div>
               </div>
               <div className="flex flex-col ml-6">
-                <div className="text-xl text-white">{conversation?.name}</div>
+                <div className="text-xl text-white">{contact?.name}</div>
                 <div className="text-[0.75rem] font-semibold">
                   {isOnline ? <span>ACTIVE NOW</span> : <span>OFFLINE</span>}
                 </div>
@@ -247,13 +248,24 @@ const Messages = () => {
             className="flex items-center min-h-16 h-[12%]"
             onSubmit={handleMessage}
           >
-            <input
-              type="text"
-              placeholder="Type a message"
-              className="input mx-6 w-full h-[60%] focus:outline-none border-none bg-customBlack"
-              value={message || ""}
-              onChange={(e) => setMessage(e.target.value)}
-            />
+            <div className="relative w-full mx-6 h-[60%]">
+              <input
+                type="text"
+                placeholder="Type a message"
+                className="input w-full h-full focus:outline-none border-none bg-customBlack pl-4 pr-10"
+                value={message || ""}
+                onChange={(e) => setMessage(e.target.value)}
+              />
+                {sending ? (
+                  <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                    <span className="loading loading-spinner loading-sm mr-2"></span>
+                  </div>
+                ) : (
+                  <button type="submit" className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                    <IoIosSend className="w-6 h-6 mr-2" />
+                  </button>
+                )}
+            </div>
           </form>
         </div>
       ) : (

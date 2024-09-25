@@ -1,14 +1,13 @@
 import axios from "axios";
 import io from "socket.io-client";
-import Conversation from "../components/Conversation";
+import Contacts from "../components/Contacts";
 import Messages from "../components/Messages";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setSocket, setOnlineUsers } from "../Redux/socketSlice";
 import { logout } from "../Redux/authSlice";
-import { setRemove } from "../Redux/conversationSlice";
-import { setReload } from "../Redux/reloadSlice";
+import { setRemove } from "../Redux/contactSlice";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { FaPlus } from "react-icons/fa6";
 import { toast } from 'react-toastify';
@@ -24,7 +23,7 @@ const Home = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const reload = useSelector((state) => state.refresh.reload);
+  const reload = useSelector((state) => state.refresh.setContactReload);
   const user = useSelector((state) => state.auth.userData);
   const socket = useSelector((state) => state.socket.instance);
 
@@ -67,15 +66,12 @@ const Home = () => {
     }
     else {
       try {
-        const data = JSON.parse(localStorage.getItem("user"));
-        const token = data?.userData?.token;
         const response = await axios.post(`http://localhost:3000/api/v1/addFriend/${friendEmail}`, {}, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         })
         const friendName = response?.data?.data?.name;
-        dispatch(setReload(true));
         if (friendName) {
           toast.success(`${friendName} is added.`, {
             theme: "dark",
@@ -94,13 +90,10 @@ const Home = () => {
         console.log(error);
       }
     }
-  }, [friendEmail, dispatch])
+  }, [friendEmail, token])
 
   useEffect(() => {
     const getConversation = async () => {
-      setLoading(true);
-      const data = JSON.parse(localStorage.getItem("user"));
-      const token = data?.userData?.token;
       try {
         const response = await axios.get("http://localhost:3000/api/v1/friends", {
           headers: {
@@ -115,18 +108,13 @@ const Home = () => {
           hideProgressBar: true,
         });
         console.log(error);
-      } finally {
-        setLoading(false);
-        dispatch(setReload(false));
       }
     };
     getConversation();
-  }, [reload, dispatch]);
+  }, [reload, token]);
 
   useEffect(() => {
     const getFavourites = async () => {
-      const data = JSON.parse(localStorage.getItem("user"));
-      const token = data?.userData?.token;
       try {
         const response = await axios.get('http://localhost:3000/api/v1/favourite/get', {
           headers: {
@@ -144,7 +132,7 @@ const Home = () => {
       }
     }
     getFavourites();
-  }, [reload])
+  }, [reload,token])
 
   useEffect(() => {
     const socket = io('localhost:3000', {
@@ -162,7 +150,7 @@ const Home = () => {
     }
   }, [dispatch, user])
 
-  const handleMessageSeen = useCallback(async ({userId, conversationId}) => {
+  const handleMessageSeen = useCallback(async ({ userId, conversationId }) => {
     try {
       const response = await axios.get(`http://localhost:3000/api/v1/conversation/messages/${userId}/${conversationId}`, {
         headers: {
@@ -171,14 +159,14 @@ const Home = () => {
       });
       const messages = response.data?.data.messages;
       const id = response.data?.data?._id;
-      if(messages) {
+      if (messages) {
         try {
-          await axios.patch(`http://localhost:3000/api/v1/conversation/updateSeen/${id}`, {} , {
+          await axios.patch(`http://localhost:3000/api/v1/conversation/updateSeen/${id}`, {}, {
             headers: {
               Authorization: `Bearer ${token}`
             }
           })
-          socket?.emit('updateSeen', {conversationId});
+          socket?.emit('updateSeen', { conversationId });
         } catch (error) {
           console.log(error);
         }
@@ -206,7 +194,7 @@ const Home = () => {
         <>
           <div className="flex flex-col w-1/3 min-w-[400px] max-w-[500px] bg-customBlack">
             <div className="flex flex-col sticky top-0 z-10">
-              <div className="flex h-[74px] w-full bg-customDark2">
+              <div className="flex h-[74px] w-full">
                 <div className="flex items-center basis-[75%] lg:basis-[85%]">
                   <h1 className="text-[1.75rem] font-semibold m-4 ml-10 text-white">
                     Chats
@@ -230,7 +218,7 @@ const Home = () => {
                 </div>
               </div>
               <div className="flex m-4">
-                <div className="input input-bordered focus:outline-none flex items-center gap-2 w-full h-10 bg-customDark2 border-none focus-within:outline-none focus-within:border-none">
+                <div className="input input-bordered focus:outline-none flex items-center gap-2 w-full h-10 border-none focus-within:outline-none focus-within:border-none">
                   <input
                     type="text"
                     className="grow"
@@ -269,9 +257,7 @@ const Home = () => {
             </div>
             <div className="flex-1 overflow-y-auto">
               {displayedConversations ? (
-                displayedConversations.map((conversation) => (
-                  <Conversation key={conversation._id} conversation={conversation} />
-                ))
+                <Contacts contacts={displayedConversations} />
               ) : (
                 <div className="h-full flex justify-center">
                   <h1 className="text-lg mt-40">Feels so empty!</h1>
@@ -285,31 +271,31 @@ const Home = () => {
         </>
       )}
       <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box bg-customDark2">
+        <div className="modal-box">
           <h3 className="font-bold text-lg">Are you sure?</h3>
           <p className="py-4">You will be logged out!</p>
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn mr-3 btn-ghost hover:bg-customDark2 hover">Close</button>
-              <button className="btn bg-customPurple hover:bg-customRed" onClick={logoutUser}>Logout</button>
+              <button className="btn mr-3 btn-ghost">Close</button>
+              <button className="btn" onClick={logoutUser}>Logout</button>
             </form>
           </div>
         </div>
       </dialog>
       <dialog id="my_modal_10" className="modal">
-        <div className="modal-box w-full bg-customDark2">
+        <div className="modal-box w-full">
           <h3 className="font-bold text-lg mb-4">Add Contact</h3>
           <input
             type="text"
             placeholder="Enter contact's email"
-            className="input input-bordered w-full focus:outline-customRed focus:border-none bg-customDark border-customRed"
+            className="input input-bordered w-full focus:border-none"
             value={friendEmail}
             onChange={(e) => setFriendEmail(e.target.value)}
           />
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn btn-ghost mr-3 hover:bg-customDark2 hover">Close</button>
-              <button className="btn hover:bg-customRed bg-customPurple" onClick={addFriend}>Add</button>
+              <button className="btn btn-ghost mr-3">Close</button>
+              <button className="btn" onClick={addFriend}>Add</button>
             </form>
           </div>
         </div>

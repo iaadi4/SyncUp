@@ -1,15 +1,14 @@
 import axios from "axios";
 import { useEffect, useState, useCallback } from "react";
-import { setSelected } from "../Redux/conversationSlice";
+import { setSelected } from "../Redux/contactSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-const Conversation = ({ conversation }) => {
-
+const Contact = ({ contact }) => {
   const dispatch = useDispatch();
-  const selectedConversation = useSelector((state) => state.conversation.selected);
-  const selected = selectedConversation?._id === conversation._id;
+  const selectedcontact = useSelector((state) => state.contact.selected);
+  const selected = selectedcontact?._id === contact._id;
   const onlineUsers = useSelector((state) => state.socket.onlineUsers);
-  const isOnline = onlineUsers.includes(conversation._id);
+  const isOnline = onlineUsers.includes(contact._id);
 
   const [lastMessage, setLastMessage] = useState('');
   const [lastMessageTime, setLastMessageTime] = useState('');
@@ -23,7 +22,7 @@ const Conversation = ({ conversation }) => {
 
   const getId = useCallback(async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/v1/conversation/messages/${userId}/${conversation._id}`, {
+      const response = await axios.get(`http://localhost:3000/api/v1/conversation/messages/${userId}/${contact._id}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -57,7 +56,7 @@ const Conversation = ({ conversation }) => {
     } catch (error) {
       console.log(error);
     }
-  }, [conversation._id, token, userId])
+  }, [contact, token, userId])
 
   useEffect(() => {
     getId();
@@ -75,26 +74,26 @@ const Conversation = ({ conversation }) => {
 
   useEffect(() => {
     if(selected) {
-      socket?.emit('seen', {userId: userId, conversationId: conversation._id});
+      socket?.emit('seen', {userId: userId, conversationId: contact._id});
     }
-  }, [conversation, socket, selected, userId])
+  }, [contact, socket, selected, userId])
 
 return (
   <div
     className={`flex w-full h-20 cursor-pointer ${selected ? "bg-zinc-900" : ""}`}
-    onClick={() => dispatch(setSelected(conversation))}
+    onClick={() => dispatch(setSelected(contact))}
   >
     <div className="flex items-center w-full mx-5">
       <div className="flex basis-2/12">
         <div className={`avatar ${isOnline ? "online" : ""}`}>
           <div className="w-14 rounded-full">
-            <img src={conversation.image ? conversation.image : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"} />
+            <img src={contact.image ? contact.image : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"} />
           </div>
         </div>
       </div>
       <div className="flex flex-col basis-8/12">
         <div>
-          <h1 className="font-semibold text-slate-300 ml-4 md:ml-3 lg:ml-2">{conversation.name}</h1>
+          <h1 className="font-semibold text-slate-300 ml-4 md:ml-3 lg:ml-2">{contact.name}</h1>
         </div>
         <div>
           <h1 className="ml-4 md:ml-3 lg:ml-2" style={{ wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}>{lastMessage}</h1>
@@ -110,4 +109,4 @@ return (
 );
 };
 
-export default Conversation;
+export default Contact;

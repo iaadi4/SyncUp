@@ -3,14 +3,14 @@ import { createSlice } from "@reduxjs/toolkit";
 const reloadSlice = createSlice({
     name: 'refresh',
     initialState: {
-        reload: false
+        contactReload: false
     },
     reducers: {
-        setReload: (state, action) => {
-            state.reload = action.payload
-        } 
+        setContactReload: (state, action) => {
+            state.contactReload = action.payload
+        }
     }
 })
 
-export const { setReload } = reloadSlice.actions;
+export const { setContactReload } = reloadSlice.actions;
 export default reloadSlice.reducer;
