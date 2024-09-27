@@ -1,9 +1,10 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { GrClearOption } from "react-icons/gr";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { setSelected } from "../Redux/contactSlice";
 import { IoMdMore } from "react-icons/io";
 import { IoIosSend } from "react-icons/io";
+import { setContactReload } from "../Redux/reloadSlice";
 import { toast } from 'react-toastify';
 import axios from "axios";
 import Message from "./Message";
@@ -16,6 +17,7 @@ const Messages = () => {
   const [sending, setSending] = useState(false);
 
   const lastMessageRef = useRef();
+  const dispatch = useDispatch();
 
   const data = JSON.parse(localStorage.getItem("user"));
   const token = data?.userData?.token;
@@ -41,7 +43,6 @@ const Messages = () => {
 
   useEffect(() => {
     socket?.on("newMessage", handleNewMessage);
-
     return () => socket?.off("newMessage", handleNewMessage);
   }, [socket, handleNewMessage]);
 
@@ -107,6 +108,7 @@ const Messages = () => {
   const removeFriend = useCallback(async () => {
     if (contact) {
       try {
+        dispatch(setContactReload(true));
         await axios.patch(`http://localhost:3000/api/v1/removeFriend/${contact._id}`, {}, {
           headers: {
             Authorization: `Bearer ${token}`
@@ -124,13 +126,16 @@ const Messages = () => {
           hideProgressBar: true,
         });
         console.log(error);
+      } finally {
+        dispatch(setContactReload(false));
       }
     }
-  }, [contact, token]);
+  }, [contact, token, dispatch]);
 
   const toggleFavourite = useCallback(async () => {
     if (contact) {
       try {
+        dispatch(setContactReload(true));
         await axios.post(`http://localhost:3000/api/v1/favourite/${contact._id}`, {}, {
           headers: {
             Authorization: `Bearer ${token}`
@@ -143,18 +148,18 @@ const Messages = () => {
           hideProgressBar: true,
         });
         console.log(error);
+      } finally {
+        dispatch(setContactReload(false));
       }
     }
-  }, [contact, token]);
+  }, [contact, token, dispatch]);
 
   useEffect(() => {
     if (contact) {
       socket?.on('clearMessage', ({ conversationId }) => {
-        if (userId == conversationId) {
+        if (userId == conversationId)
           setMessages([]);
-        }
       })
-
       return () => socket?.off('clearMessage');
     }
   }, [contact, socket, userId]);
@@ -256,15 +261,15 @@ const Messages = () => {
                 value={message || ""}
                 onChange={(e) => setMessage(e.target.value)}
               />
-                {sending ? (
-                  <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
-                    <span className="loading loading-spinner loading-sm mr-2"></span>
-                  </div>
-                ) : (
-                  <button type="submit" className="absolute right-2 top-1/2 transform -translate-y-1/2">
-                    <IoIosSend className="w-6 h-6 mr-2" />
-                  </button>
-                )}
+              {sending ? (
+                <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                  <span className="loading loading-spinner loading-sm mr-2"></span>
+                </div>
+              ) : (
+                <button type="submit" className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                  <IoIosSend className="w-6 h-6 mr-2" />
+                </button>
+              )}
             </div>
           </form>
         </div>
