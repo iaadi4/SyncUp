@@ -1,6 +1,5 @@
 import repositories from '../repositories/index.js';
 import models from '../models/index.js';
-import mongoose from 'mongoose';
 
 class UserService {
 
@@ -66,6 +65,26 @@ class UserService {
         try {
             const favourites = await this.userRepository.getFavourites(userId);
             return favourites;
+        } catch (error) {
+            console.log('Something went wrong in the service layer');
+            throw error;
+        }
+    }
+    
+    async updateUser(userId, data) {
+        try {
+            const response = await this.userRepository.update(userId, data);
+            return response;
+        } catch (error) {
+            console.log('Something went wrong in the service layer');
+            throw error;
+        }
+    }
+
+    async getUser(userId) {
+        try {
+            const response = await this.userRepository.get(userId);
+            return response;
         } catch (error) {
             console.log('Something went wrong in the service layer');
             throw error;

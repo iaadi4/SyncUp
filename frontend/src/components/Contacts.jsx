@@ -1,7 +1,7 @@
-import Contact from "./Contact"
+import Contact from "./Contact";
 import axios from "axios";
-import { RiLogoutBoxLine } from "react-icons/ri";
-import { FaPlus } from "react-icons/fa6";
+import { Link } from "react-router-dom";
+import { IoMdSettings } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { logout } from "../Redux/authSlice";
@@ -140,7 +140,7 @@ const Contacts = () => {
     return (
         <div>
             <div className="flex h-full flex-col w-1/3 min-w-[400px] max-w-[500px] bg-customBlack">
-                <div className="flex flex-col sticky top-0 z-10">
+                <div className="sticky top-0 z-10 flex flex-col">
                     <div className="flex h-[74px] w-full">
                         <div className="flex items-center basis-[75%] lg:basis-[85%]">
                             <h1 className="text-[1.75rem] font-semibold m-4 ml-10 text-white">
@@ -148,24 +148,18 @@ const Contacts = () => {
                             </h1>
                         </div>
                         <div className="flex items-center justify-end">
-                            <div
-                                className="flex p-2 w-12 btn btn-ghost rounded-full hover:bg-slate-900 cursor-pointer mt-1 mr-3"
-                                onClick={() => document.getElementById('my_modal_5')?.showModal()}
-                            >
-                                <RiLogoutBoxLine className="w-6 h-6" />
-                            </div>
-                        </div>
-                        <div className="flex items-center justify-end">
-                            <div
-                                className="flex p-2 w-12 btn btn-ghost rounded-full hover:bg-slate-900 cursor-pointer mt-1 mr-2"
-                                onClick={() => document.getElementById('my_modal_10')?.showModal()}
-                            >
-                                <FaPlus className="w-6 h-6" />
+                            <div tabIndex={0} className="flex w-12 p-2 mr-3 rounded-full cursor-pointer dropdown dropdown-bottom btn btn-ghost">
+                                <IoMdSettings className="w-6 h-6" />
+                                <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                                    <li><div onClick={() => document.getElementById('my_modal_10')?.showModal()}>Add contact</div></li>
+                                    <li><div onClick={() => document.getElementById('my_modal_5')?.showModal()}>Log out</div></li>
+                                    <li><Link to="/settings">All settings</Link></li>
+                                </ul>
                             </div>
                         </div>
                     </div>
                     <div className="flex m-4">
-                        <div className="input input-bordered focus:outline-none flex items-center gap-2 w-full h-10 border-none focus-within:outline-none focus-within:border-none">
+                        <div className="flex items-center w-full h-10 gap-2 border-none input input-bordered focus:outline-none focus-within:outline-none focus-within:border-none">
                             <input
                                 type="text"
                                 className="grow"
@@ -177,7 +171,7 @@ const Contacts = () => {
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 16 16"
                                 fill="currentColor"
-                                className="h-4 w-4 opacity-70"
+                                className="w-4 h-4 opacity-70"
                             >
                                 <path
                                     fillRule="evenodd"
@@ -187,7 +181,7 @@ const Contacts = () => {
                             </svg>
                         </div>
                     </div>
-                    <div className="flex justify-evenly h-10 items-center mb-6">
+                    <div className="flex items-center h-10 mb-6 justify-evenly">
                         <h1
                             className={`text-sm cursor-pointer font-semibold ${selected == 1 ? 'underline underline-offset-4 decoration-[1.5px] text-white' : ''}`}
                             onClick={(() => setSelected(1))}
@@ -204,7 +198,7 @@ const Contacts = () => {
                 </div>
                 <div className="flex-1 overflow-y-auto">
                     {loading ? (
-                        <div className="flex w-full items-center justify-center bg-customBlack">
+                        <div className="flex items-center justify-center w-full bg-customBlack">
                             <div className="loading loading-dots loading-lg"></div>
                         </div>
                     ) : (<div>
@@ -213,8 +207,8 @@ const Contacts = () => {
                                 <Contact key={contact._id} contact={contact} />
                             ))
                         ) : (
-                            <div className="h-full flex justify-center">
-                                <h1 className="text-lg mt-40">Feels so empty!</h1>
+                            <div className="flex justify-center h-full">
+                                <h1 className="mt-40 text-lg">Feels so empty!</h1>
                             </div>
                         )}
                     </div>
@@ -223,29 +217,29 @@ const Contacts = () => {
             </div>
             <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
                 <div className="modal-box">
-                    <h3 className="font-bold text-lg">Are you sure?</h3>
+                    <h3 className="text-lg font-bold">Are you sure?</h3>
                     <p className="py-4">You will be logged out!</p>
                     <div className="modal-action">
                         <form method="dialog">
-                            <button className="btn mr-3 btn-ghost">Close</button>
+                            <button className="mr-3 btn btn-ghost">Close</button>
                             <button className="btn" onClick={logoutUser}>Logout</button>
                         </form>
                     </div>
                 </div>
             </dialog>
             <dialog id="my_modal_10" className="modal">
-                <div className="modal-box w-full">
-                    <h3 className="font-bold text-lg mb-4">Add Contact</h3>
+                <div className="w-full modal-box">
+                    <h3 className="mb-4 text-lg font-bold">Add Contact</h3>
                     <input
                         type="text"
                         placeholder="Enter contact's email"
-                        className="input input-bordered w-full focus:border-none"
+                        className="w-full input input-bordered focus:border-none"
                         value={friendEmail}
                         onChange={(e) => setFriendEmail(e.target.value)}
                     />
                     <div className="modal-action">
                         <form method="dialog">
-                            <button className="btn btn-ghost mr-3">Close</button>
+                            <button className="mr-3 btn btn-ghost">Close</button>
                             <button className="btn" onClick={addFriend}>Add</button>
                         </form>
                     </div>

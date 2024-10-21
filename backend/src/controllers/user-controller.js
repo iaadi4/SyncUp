@@ -84,10 +84,44 @@ const getFavourite = async(req, res) => {
     }
 }
 
+const updateUser = async(req, res) => {
+    try {
+        const response = await userService.updateUser(req.user.id, req.body);
+        return res.status(200).json({
+            data: response,
+            success: true
+        })
+    } catch (error) {
+        return res.status(500).json({
+            data: {},
+            error: error,
+            success: false
+        })
+    }
+}
+
+const getUser = async(req, res) => {
+    try {
+        const user = await userService.getUser(req.user.id);
+        return res.status(200).json({
+            data: user,
+            success: true
+        })
+    } catch (error) {
+        return res.status(500).json({
+            data: {},
+            error: error,
+            success: false
+        })
+    }
+}
+
 export default {
     signup,
     login,
     getAll,
     favourite,
-    getFavourite
+    getFavourite,
+    updateUser,
+    getUser
 }
