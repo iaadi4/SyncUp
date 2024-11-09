@@ -6,6 +6,7 @@ import { IoMdMore } from "react-icons/io";
 import { IoIosSend } from "react-icons/io";
 import { setContactReload } from "../Redux/reloadSlice";
 import { toast } from 'react-toastify';
+import pfp from "../../public/pfp.jpg";
 import axios from "axios";
 import Message from "./Message";
 
@@ -28,7 +29,7 @@ const Messages = () => {
   const socket = useSelector((state) => state.socket.instance);
   const user = useSelector((state) => state.auth.userData);
   const reload = useSelector((state) => state.refresh.reload);
-  const userId = user.userData._id;
+  const userId = user?.userData?._id;
 
   useEffect(() => {
     setSelected(null);
@@ -206,7 +207,7 @@ const Messages = () => {
               <div className="flex ml-4">
                 <div className="avatar">
                   <div className="w-12 rounded-full">
-                    <img src={contact.image ? contact.image : "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg"} />
+                    <img src={contact.image ? contact.image : pfp} />
                   </div>
                 </div>
               </div>
